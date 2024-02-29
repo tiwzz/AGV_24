@@ -90,7 +90,7 @@ void MX_FREERTOS_Init(void);
 
 /**
  * @brief  The application entry point.
- * @retval int
+ * @retval int 355000  9500  620000 10000
  */
 int main(void)
 {
@@ -142,7 +142,7 @@ int main(void)
     can_filter_init();
     delay_init();
     remote_control_init();
-
+vision_init();
     DWT_Init(168);
     while (BMI088_init(&hspi1, 0) != BMI088_NO_ERROR)
     {

@@ -97,7 +97,7 @@ extern void CAN_cmd_chassis_reset_ID(void);
  * @param[in]      chassis_behaviour: 底盘运动模式
  * @retval         none
  */
-extern void CAN_cmd_shoot(int16_t fric1,int16_t fric2 ,int16_t shoot);
+extern void CAN_cmd_shoot(int16_t fric1,int16_t fric2 ,int16_t shoot, int16_t rev);
 /**
   * @brief          return the yaw 6020 motor data point
   * @param[in]      none

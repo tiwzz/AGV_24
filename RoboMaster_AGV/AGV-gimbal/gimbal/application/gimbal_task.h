@@ -81,7 +81,7 @@
 
 
 //任务初始化 空闲一段时间
-#define GIMBAL_TASK_INIT_TIME 401
+#define GIMBAL_TASK_INIT_TIME 100//401
 //yaw,pitch控制通道以及状态开关通道
 #define YAW_CHANNEL   2
 #define PITCH_CHANNEL 3
@@ -96,14 +96,14 @@
 #define TEST_KEYBOARD KEY_PRESSED_OFFSET_R
 //rocker value deadband
 //遥控器输入死区，因为遥控器存在差异，摇杆在中间，其值不一定为零
-#define RC_DEADBAND   15
+#define RC_DEADBAND   20
 
 
 #define YAW_RC_SEN    -0.000005f
 #define PITCH_RC_SEN  0.000004f //0.0050.000005f
 
 #define YAW_MOUSE_SEN   0.00005f
-#define PITCH_MOUSE_SEN 0.00015f
+#define PITCH_MOUSE_SEN 0.00006f
 
 #define YAW_ENCODE_SEN    0.01f
 #define PITCH_ENCODE_SEN  0.01f
@@ -116,13 +116,18 @@
 //电机码盘值最大以及中值
 #define HALF_ECD_RANGE  4096
 #define ECD_RANGE       8191
+////云台初始化回中值，允许的误差,并且在误差范围内停止一段时间以及最大时间6s后解除初始化状态，
+//#define GIMBAL_INIT_ANGLE_ERROR     0.01f
+//#define GIMBAL_INIT_STOP_TIME       100
+//#define GIMBAL_INIT_TIME            5000
+//#define GIMBAL_CALI_REDUNDANT_ANGLE 0.1f
 //云台初始化回中值，允许的误差,并且在误差范围内停止一段时间以及最大时间6s后解除初始化状态，
-#define GIMBAL_INIT_ANGLE_ERROR     0.01f
+#define GIMBAL_INIT_ANGLE_ERROR     0.1f
 #define GIMBAL_INIT_STOP_TIME       100
-#define GIMBAL_INIT_TIME            5000
+#define GIMBAL_INIT_TIME            6000
 #define GIMBAL_CALI_REDUNDANT_ANGLE 0.1f
 //云台初始化回中值的速度以及控制到的角度
-#define GIMBAL_INIT_PITCH_SPEED     0.003f
+#define GIMBAL_INIT_PITCH_SPEED     0.001f//0.003f
 #define GIMBAL_INIT_YAW_SPEED       0.005f
 
 #define INIT_YAW_SET    0.0f
@@ -155,13 +160,13 @@
 #define GIMBAL_PITCH_AUTO_SCAN_NUM 133.3f
 
 //云台pitch轴最大值相对角度  0x004D
-#define GIMBAL_PITCH_MAX_ENCODE 0x1AB8//0x004D
+#define GIMBAL_PITCH_MAX_ENCODE 5539//0x004D
 //云台pitch轴最小相对角
-#define GIMBAL_PITCH_MIN_ENCODE 0x16A0//0x1796
+#define GIMBAL_PITCH_MIN_ENCODE 4366//0x1796
 //云台pitch轴中值
-#define GIMBAL_PITCH_OFFSET_ENCODE 0x1B79
+#define GIMBAL_PITCH_OFFSET_ENCODE 4777
 //云台yaw轴中值
-#define GIMBAL_YAW_OFFSET_ENCODE 3660
+#define GIMBAL_YAW_OFFSET_ENCODE 7824
 //yaw轴后侧中值
 #define GIMBAL_YAW_LAST_OFFSET_ENCODE (((GIMBAL_YAW_OFFSET_ENCODE + HALF_ECD_RANGE) > ECD_RANGE) ? (GIMBAL_YAW_OFFSET_ENCODE + HALF_ECD_RANGE - ECD_RANGE) : (GIMBAL_YAW_OFFSET_ENCODE + HALF_ECD_RANGE))
 //云台yaw轴陀螺仪误差
@@ -205,13 +210,13 @@
 #define PITCH_FEED_FORWARD 0.95f
 
 //角度误差项系数
-#define K_YAW_ANGLE_ERROR 60000.0f
-#define K_PITCH_ANGLE_ERROR 550000.0f
+#define K_YAW_ANGLE_ERROR 80000.0f//60000.0f
+#define K_PITCH_ANGLE_ERROR 500000.0f//850000.0f//550000.0f//450000.0f
 
 
 //速度项系数
-#define K_YAW_ANGLE_SPEED 5500.0f
-#define K_PITCH_ANGLE_SPEED 4000.0f
+#define K_YAW_ANGLE_SPEED 6000.0f//5500.0f
+#define K_PITCH_ANGLE_SPEED 7000.0f//7000.0f//8000.0f//3500.0f
 
 //最大最小输出
 #define YAW_MAX_OUT 32000.0f
@@ -334,6 +339,9 @@ typedef struct
     gimbal_motor_t gimbal_yaw_motor;
     gimbal_motor_t gimbal_pitch_motor;
 
+	fp32 right_click_time;
+	
+	fp32 key_C;
 } gimbal_control_t;
 
 

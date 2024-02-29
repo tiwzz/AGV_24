@@ -1,5 +1,7 @@
 #include "bsp_usart.h"
 #include "main.h"
+#include "bsp_usart.h"
+#include "string.h"
 
 extern UART_HandleTypeDef huart1;
 extern DMA_HandleTypeDef hdma_usart1_tx;
@@ -8,6 +10,59 @@ extern DMA_HandleTypeDef hdma_usart1_rx;
 extern UART_HandleTypeDef huart6;
 extern DMA_HandleTypeDef hdma_usart6_rx;
 extern DMA_HandleTypeDef hdma_usart6_tx;
+
+uint8_t vision_rx_buf[2][VISION_RX_LEN_2];
+vision_rxfifo_t vision_rxfifo = {0};
+
+
+void vision_init(void)
+{
+	//enable the DMA transfer for the receiver request
+	//使能DMA串口接收
+	SET_BIT(huart1.Instance->CR3, USART_CR3_DMAR);
+
+	//enalbe idle interrupt
+	//使能空闲中断
+	__HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE);
+
+	//disable DMA
+	//失效DMA
+	__HAL_DMA_DISABLE(&hdma_usart1_rx);
+	while(hdma_usart1_rx.Instance->CR & DMA_SxCR_EN)
+	{
+		__HAL_DMA_DISABLE(&hdma_usart1_rx);
+	}
+
+	hdma_usart1_rx.Instance->PAR = (uint32_t) & (USART1->DR);
+	//memory buffer 1
+	//内存缓冲区1
+	hdma_usart1_rx.Instance->M0AR = (uint32_t)(vision_rx_buf[0]);
+	//memory buffer 2
+	//内存缓冲区2
+	hdma_usart1_rx.Instance->M1AR = (uint32_t)(vision_rx_buf[1]);
+	//data length
+	//数据长度
+	hdma_usart1_rx.Instance->NDTR = VISION_RX_LEN_2;
+	//enable double memory buffer
+	//使能双缓冲区
+	SET_BIT(hdma_usart1_rx.Instance->CR, DMA_SxCR_DBM);
+
+	//enable DMA
+	//使能DMA
+	__HAL_DMA_ENABLE(&hdma_usart1_rx);
+}
+ 
+void vision_rx_decode(uint8_t *test_code)
+{
+	if((uint8_t)test_code[0]==0xA5)
+	{
+		memset(&vision_rxfifo, 0, sizeof(vision_rxfifo));
+		
+		memcpy(&vision_rxfifo, test_code,sizeof(vision_rxfifo));
+	
+	}
+}
+
 
 void usart1_tx_dma_init(void)
 {
@@ -50,7 +105,6 @@ void usart1_tx_dma_enable(uint8_t *data, uint16_t len)
 
     __HAL_DMA_ENABLE(&hdma_usart1_tx);
 }
-
 
 void usart6_init(uint8_t *rx1_buf, uint8_t *rx2_buf, uint16_t dma_buf_num)
 {
@@ -131,4 +185,7 @@ void usart6_tx_dma_enable(uint8_t *data, uint16_t len)
     __HAL_DMA_ENABLE(&hdma_usart6_tx);
 }
 
-
+vision_rxfifo_t *get_vision_fifo(void)
+{
+	return &vision_rxfifo;
+}

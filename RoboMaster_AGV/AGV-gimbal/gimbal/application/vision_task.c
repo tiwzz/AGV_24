@@ -74,12 +74,12 @@ void vision_task(void const* pvParameters)
     vTaskDelay(VISION_TASK_INIT_TIME);
     // 视觉任务初始化
     vision_task_init(&vision_control);
-    // 等待云台射击初始化完成
-    while(shoot_control_vision_task() && gimbal_control_vision_task())
-    {
-        //系统延时
-        vTaskDelay(VISION_CONTROL_TIME_MS);
-    }
+//    // 等待云台射击初始化完成
+//    while(shoot_control_vision_task() && gimbal_control_vision_task())
+//    {
+//        //系统延时
+//        vTaskDelay(VISION_CONTROL_TIME_MS);
+//    }
 
     while(1)
     {

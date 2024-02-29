@@ -23,7 +23,8 @@
 #define BOARD_CAN hcan1
 //发弹can通信设备
 #define SHOOT_CAN hcan2
-
+//裁判系统can通信
+#define REFEREE_CAN hcan1
 typedef enum
 {
     CAN_CHASSIS_ALL_ID = 0x200,
@@ -83,6 +84,8 @@ void can_comm_board(int16_t relative_angle, int16_t chassis_vx, int16_t chassis_
  * @param trigger 拨弹盘电机电流值
  */
 void can_comm_shoot(int16_t fric1, int16_t fric2, int16_t trigger);
+
+void can_comm_referee(int16_t key_1,int32_t key_2, int32_t key_3, int16_t key_other );
 
 bool can_comm_task_init_finish(void);
 

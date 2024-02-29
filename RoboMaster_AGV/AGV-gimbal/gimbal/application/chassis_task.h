@@ -30,9 +30,9 @@
 //底盘运行模式通道
 #define CHASSIS_RUN_MODE_CHANNEL 1
 //遥控器前进摇杆（max 660）转化成车体前进速度（m/s）的比例
-#define CHASSIS_VX_RC_SEN 0.4f
+#define CHASSIS_VX_RC_SEN 1.0f
 //遥控器左右摇杆（max 660）转化成车体左右速度（m/s）的比例
-#define CHASSIS_VY_RC_SEN 0.4f
+#define CHASSIS_VY_RC_SEN 1.0f
 //摇杆死区
 #define CHASSIS_RC_DEADLINE 30
 

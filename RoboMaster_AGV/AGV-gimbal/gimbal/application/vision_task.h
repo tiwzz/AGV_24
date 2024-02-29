@@ -68,19 +68,19 @@
 //比例补偿器比例系数
 #define ITERATE_SCALE_FACTOR 0.3f
 //重力加速度
-#define GRAVITY 9.7985f
+#define GRAVITY 9.7988f
 
 //固有时间偏移即上位机计算时间单位ms
 #define TIME_BIAS 6
 //机器人自身固有时间偏差
-#define ROBOT_TIMR_BIAS 20
+#define ROBOT_TIMR_BIAS 160//135//慢速小100//小陀螺250//平移100//20
 //偏差时间队列大小
 #define TIME_BIAS_QUEUE_CAPACITY 10 
 
 //ms转s
 #ifndef TIME_MS_TO_S
 #define TIME_MS_TO_S(ms) (fp32)(ms / 1000.0f)
-
+ 
 #endif // !TIME_MS_TO_S(x)
 
 //全圆弧度
@@ -88,9 +88,9 @@
 
 // 击打敌方机器人0.1
 //imu到枪口的竖直距离
-#define Z_STATIC 0.1f
+#define Z_STATIC 0.03955f//0.1f
 //枪口前推距离
-#define DISTANCE_STATIC 0.21085f
+#define DISTANCE_STATIC 0.15733f//0.21085f
 //初始飞行时间
 #define INIT_FILIGHT_TIME 0.5f
 

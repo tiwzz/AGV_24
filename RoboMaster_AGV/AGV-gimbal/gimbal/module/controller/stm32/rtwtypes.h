@@ -31,16 +31,17 @@
 #ifndef RTWTYPES_H
 #define RTWTYPES_H
 
+#include "struct_typedef.h"
 /* Logical type definitions */
-#if (!defined(__cplusplus))
-#  ifndef false
-#   define false                       (0U)
-#  endif
+//#if (!defined(__cplusplus))
+//#  ifndef false
+//#   define false                       (0U)
+//#  endif
 
-#  ifndef true
-#   define true                        (1U)
-#  endif
-#endif
+//#  ifndef true
+//#   define true                        (1U)
+//#  endif
+//#endif
 
 /*=======================================================================*
  * Target hardware information

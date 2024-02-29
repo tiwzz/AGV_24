@@ -59,6 +59,12 @@ static can_comm_data_t shoot_can_comm_data = {
     .can_comm_target = CAN_COMM_SHOOT,
 };
 
+//裁判系统通信数据
+static can_comm_data_t referee_can_comm_data = {
+    .can_handle = &REFEREE_CAN, // 初始化裁判系统通信设备can
+    .can_comm_target = CAN_COMM_REFEREE,
+};
+
 bool init_finish = false;
 
 //实例化can通信线程结构体,全局变量，保证数据一直存在
@@ -176,6 +182,25 @@ void can_comm_shoot(int16_t fric1, int16_t fric2, int16_t trigger)
     shoot_can_comm_data.data[7] = 0;
     //添加数据到通信队列
     add_can_comm_queue(&can_comm, &shoot_can_comm_data); 
+}
+
+void can_comm_referee(int16_t key_1,int32_t key_2, int32_t key_3, int16_t key_other )
+{
+	  uint32_t send_mail_box;
+    referee_can_comm_data.transmit_message.StdId = 0x219;
+    referee_can_comm_data.transmit_message.IDE = CAN_ID_STD;
+    referee_can_comm_data.transmit_message.RTR = CAN_RTR_DATA;
+    referee_can_comm_data.transmit_message.DLC = 0x08;
+    referee_can_comm_data.data[0] = (key_1 >> 8);
+    referee_can_comm_data.data[1] = key_1;
+    referee_can_comm_data.data[2] = (key_2 >> 8);
+    referee_can_comm_data.data[3] = key_2;
+    referee_can_comm_data.data[4] = (key_3 >> 8);
+    referee_can_comm_data.data[5] = key_3;
+    referee_can_comm_data.data[6] = (key_other >> 8);
+    referee_can_comm_data.data[7] = key_other;
+    //添加数据到通信队列
+    add_can_comm_queue(&can_comm, &referee_can_comm_data); 
 }
 
 bool can_comm_task_init_finish(void)

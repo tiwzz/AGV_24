@@ -41,6 +41,7 @@
 #include "stm32_private.h"
 #include "can_comm_task.h"
 #include "chassis_task.h"
+#include "bsp_usart.h"
 // motor enconde value format, range[0-8191]
 // 电机编码值规整 0—8191
 #define ecd_format(ecd)         \
@@ -167,6 +168,8 @@ extern chassis_move_t chassis_move;
 //云台任务结构体
 gimbal_control_t gimbal_control;
 
+vision_rxfifo_t *vision_rx;
+
 /**
  * @brief          云台任务，间隔 GIMBAL_CONTROL_TIME 1ms
  * @param[in]      pvParameters: 空
@@ -182,13 +185,13 @@ void gimbal_task(void const *pvParameters)
         // gimbal init
         // 云台初始化
         gimbal_init(&gimbal_control);
-        // 判断电机是否都上线
-//        while (toe_is_error(YAW_GIMBAL_MOTOR_TOE) || toe_is_error(PITCH_GIMBAL_MOTOR_TOE))
-//        {
-//            // 等待电机上线，防止电机不工作
-//            vTaskDelay(GIMBAL_CONTROL_TIME);
-//            gimbal_feedback_update(&gimbal_control); // 云台数据反馈
-//        }
+//        //判断电机是否都上线
+//       while (toe_is_error(YAW_GIMBAL_MOTOR_TOE) || toe_is_error(PITCH_GIMBAL_MOTOR_TOE))
+//       {
+//           // 等待电机上线，防止电机不工作
+//           vTaskDelay(GIMBAL_CONTROL_TIME);
+//           gimbal_feedback_update(&gimbal_control); // 云台数据反馈
+//       }
         while (1)
         {
             gimbal_set_mode(&gimbal_control);                    // 设置云台控制模式
@@ -207,6 +210,8 @@ void gimbal_task(void const *pvParameters)
                 else
                 {
                     CAN_cmd_gimbal(gimbal_control.gimbal_yaw_motor.given_current, -gimbal_control.gimbal_pitch_motor.given_current);
+//									can_comm_referee((int16_t)(power_heat_data_t.chassis_power*100),power_heat_data_t.chassis_power_buffer,
+//																			gimbal_control.key_C,robot_state.chassis_power_limit);
                 }
             }
 
@@ -248,6 +253,8 @@ static void gimbal_init(gimbal_control_t *init)
 
     const static fp32 gimbal_yaw_auto_scan_order_filter[1] = {GIMBAL_YAW_AUTO_SCAN_NUM};
     const static fp32 gimbal_pitch_auto_scan_order_filter[1] = {GIMBAL_PITCH_AUTO_SCAN_NUM};
+	
+	
 
     // 给底盘跟随云台模式用的
     gimbal_control.gimbal_yaw_motor.zero_ecd_flag = GIMBAL_YAW_LAST_OFFSET_ENCODE;
@@ -303,14 +310,19 @@ static void gimbal_init(gimbal_control_t *init)
     init->gimbal_auto_scan.scan_pitch_period = PITCH_SCAN_PERIOD;
     init->gimbal_auto_scan.scan_yaw_period = YAW_SCAN_PERIOD;
 
-    //获取云台自动扫描初始化时间
+    /* //获取云台自动扫描初始化时间
     init->gimbal_auto_scan.scan_begin_time = TIME_MS_TO_S(HAL_GetTick());
     //pitch轴扫描中心值
-    init->gimbal_auto_scan.pitch_center_value = init->gimbal_auto_scan.pitch_range;
+    init->gimbal_auto_scan.pitch_center_value = init->gimbal_auto_scan.pitch_range; */
 
     // 设置pitch轴相对角最大值
     init->gimbal_pitch_motor.max_relative_angle = -motor_ecd_to_angle_change(GIMBAL_PITCH_MAX_ENCODE, init->gimbal_pitch_motor.offset_ecd);
     init->gimbal_pitch_motor.min_relative_angle = -motor_ecd_to_angle_change(GIMBAL_PITCH_MIN_ENCODE, init->gimbal_pitch_motor.offset_ecd);
+
+	vision_rx=get_vision_fifo();
+	
+//	vision_rx->vx = 0.3f;
+//	vision_rx->ang_z = 0.3f;
 }
 
 /**
