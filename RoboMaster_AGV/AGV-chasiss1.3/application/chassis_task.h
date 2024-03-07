@@ -78,10 +78,10 @@
 #define MAX_MOTOR_CAN_CURRENT 16000.0f
 
 // 舵电机的编码值零点
-#define Forward_L_ecd 8163 // 左前轮  1号
-#define Forward_R_ecd 660  // 右前轮  2号
-#define Back_L_ecd 7467	   // 左后轮  3号
-#define Back_R_ecd 5390	   // 右后轮  4号
+#define Forward_L_ecd 7509// 左前轮  1号
+#define Forward_R_ecd 1274  // 右前轮  2号
+#define Back_L_ecd 2788	   // 左后轮  3号
+#define Back_R_ecd 710	   // 右后轮  4号
 
 // 底盘电机速度环PID
 #define CHASSIS_KP 2000.f // 2000

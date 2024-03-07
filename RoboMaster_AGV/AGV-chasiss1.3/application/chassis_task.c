@@ -564,8 +564,8 @@ static void chassis_speed_control_set(chassis_move_t *chassis_speed_set)
 
 
 	chassis_speed_set->motor_chassis[0].speed_set = chassis_speed_set->Forward_L.wheel_speed * chassis_speed_set->Forward_L.Judge_Speed_Direction * chassis_speed_set->Forward_L.Judge_Speed_cosk;
-	chassis_speed_set->motor_chassis[1].speed_set = chassis_speed_set->Forward_R.wheel_speed * chassis_speed_set->Forward_R.Judge_Speed_Direction* chassis_speed_set->Forward_R.Judge_Speed_cosk;
-	chassis_speed_set->motor_chassis[2].speed_set = chassis_speed_set->Back_L.wheel_speed * chassis_speed_set->Back_L.Judge_Speed_Direction* chassis_speed_set->Back_L.Judge_Speed_cosk;
+	chassis_speed_set->motor_chassis[1].speed_set = -chassis_speed_set->Forward_R.wheel_speed * chassis_speed_set->Forward_R.Judge_Speed_Direction* chassis_speed_set->Forward_R.Judge_Speed_cosk;
+	chassis_speed_set->motor_chassis[2].speed_set = -chassis_speed_set->Back_L.wheel_speed * chassis_speed_set->Back_L.Judge_Speed_Direction* chassis_speed_set->Back_L.Judge_Speed_cosk;
 	chassis_speed_set->motor_chassis[3].speed_set = chassis_speed_set->Back_R.wheel_speed * chassis_speed_set->Back_R.Judge_Speed_Direction* chassis_speed_set->Back_R.Judge_Speed_cosk;
 
 	int i;
@@ -809,7 +809,7 @@ void CHASSIC_MOTOR_POWER_CONTROL(chassis_move_t *chassis_motor)
 	chassis_motor->power_control.POWER_MAX = 0; //最终底盘的最大功率
 	chassis_motor->power_control.forecast_total_power = 0; // 预测总功率
 	
-	PID_Calc(&chassis_motor->buffer_pid, chassis_motor->chassis_power_buffer, 30); //使缓冲能量维持在一个稳定的范围,这里的PID没必要移植我的，用任意一个就行
+	PID_Calc(&chassis_motor->buffer_pid, chassis_motor->chassis_power_buffer, 20); //使缓冲能量维持在一个稳定的范围,这里的PID没必要移植我的，用任意一个就行
 
 	max_power_limit = chassis_motor->chassis_power_MAX;  //获得裁判系统的功率限制数值
 	

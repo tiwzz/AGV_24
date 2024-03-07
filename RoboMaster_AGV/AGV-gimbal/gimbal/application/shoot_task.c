@@ -389,7 +389,7 @@ void shoot_control_loop(void)
   */
 static void shoot_bullet_control(void)
 {  
-
+	//
 	if((robot_state.shooter_id1_17mm_cooling_limit-power_heat_data_t.shooter_id1_17mm_cooling_heat>KH*robot_state.shooter_id1_17mm_cooling_rate)||fric_move.shoot_rc->rc.ch[4]>50 )//&& (fabs(vision_control.gimbal_vision_control.gimbal_pitch - vision_control.imu_absolution_angle.pitch) <= ALLOW_ATTACK_ERROR && fabs(vision_control.gimbal_vision_control.gimbal_yaw - vision_control.imu_absolution_angle.yaw) <= ALLOW_ATTACK_ERROR)) 
 	{
 		if(gimbal_behaviour == GIMBAL_AUTO_ATTACK && (fabs(vision_control.gimbal_vision_control.gimbal_pitch - vision_control.imu_absolution_angle.pitch) <= ALLOW_ATTACK_ERROR && fabs(vision_control.gimbal_vision_control.gimbal_yaw - vision_control.imu_absolution_angle.yaw) <= ALLOW_ATTACK_ERROR)) 
