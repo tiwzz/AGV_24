@@ -162,38 +162,38 @@ void shoot_init(void)
   */
 void shoot_level(void)
 {
-			if(robot_state.shooter_id1_17mm_speed_limit==15)  
-			{ 
-				KH=0.4;
-				ShootSpeed=15;
-//			 fric=1.90f;
-				fric=1.90f;
-//			if(robot_state.shooter_id1_17mm_cooling_limit<0.5*robot_state.shooter_id1_17mm_cooling_limit)
-//			 trigger_motor.speed_set=10.0;				
-							 trigger_motor.speed_set=-11.0;		
-			}
-			else if(robot_state.shooter_id1_17mm_speed_limit==18)
-			{ 
-				KH=0.4;
-				ShootSpeed=18;
-				fric=2.13f; 
-				trigger_motor.speed_set=-11.0;
-			}			  
-			else if(robot_state.shooter_id1_17mm_speed_limit==30)
-			{ 
+			// if(robot_state.shooter_id1_17mm_speed_limit==15)  
+// 			{ 
+// 				KH=0.4;
+// 				ShootSpeed=15;
+// //			 fric=1.90f;
+// 				fric=1.90f;
+// //			if(robot_state.shooter_id1_17mm_cooling_limit<0.5*robot_state.shooter_id1_17mm_cooling_limit)
+// //			 trigger_motor.speed_set=10.0;				
+// 							 trigger_motor.speed_set=-11.0;		
+// 			}
+// 			else if(robot_state.shooter_id1_17mm_speed_limit==18)
+// 			{ 
+// 				KH=0.4;
+// 				ShootSpeed=18;
+// 				fric=2.13f; 
+// 				trigger_motor.speed_set=-11.0;
+// 			}			  
+// 			else if(robot_state.shooter_id1_17mm_speed_limit==30)
+// 			{ 
 				KH=1.1;
 				ShootSpeed=30;
 				fric=2.95f; 
 				trigger_motor.speed_set=-10.0;
-			}
-			else
-			{
-				KH=0.32;
-				ShootSpeed=15;
-//			 fric=1.95f;
-				fric=1.90f;
-			 trigger_motor.speed_set=-10.0;	
-			}
+// 			}
+// 			else
+// 			{
+// 				KH=0.32;
+// 				ShootSpeed=15;
+// //			 fric=1.95f;
+// 				fric=1.90f;
+// 			 trigger_motor.speed_set=-10.0;	
+// 			}
 }
 
 /**
@@ -390,7 +390,7 @@ void shoot_control_loop(void)
 static void shoot_bullet_control(void)
 {  
 	//
-	if((robot_state.shooter_id1_17mm_cooling_limit-power_heat_data_t.shooter_id1_17mm_cooling_heat>KH*robot_state.shooter_id1_17mm_cooling_rate)||fric_move.shoot_rc->rc.ch[4]>50 )//&& (fabs(vision_control.gimbal_vision_control.gimbal_pitch - vision_control.imu_absolution_angle.pitch) <= ALLOW_ATTACK_ERROR && fabs(vision_control.gimbal_vision_control.gimbal_yaw - vision_control.imu_absolution_angle.yaw) <= ALLOW_ATTACK_ERROR)) 
+	if((robot_state.shooter_barrel_heat_limit-power_heat_data_t.shooter_id1_17mm_cooling_heat>KH*robot_state.shooter_barrel_heat_limit)||fric_move.shoot_rc->rc.ch[4]>50 )//&& (fabs(vision_control.gimbal_vision_control.gimbal_pitch - vision_control.imu_absolution_angle.pitch) <= ALLOW_ATTACK_ERROR && fabs(vision_control.gimbal_vision_control.gimbal_yaw - vision_control.imu_absolution_angle.yaw) <= ALLOW_ATTACK_ERROR)) 
 	{
 		if(gimbal_behaviour == GIMBAL_AUTO_ATTACK && (fabs(vision_control.gimbal_vision_control.gimbal_pitch - vision_control.imu_absolution_angle.pitch) <= ALLOW_ATTACK_ERROR && fabs(vision_control.gimbal_vision_control.gimbal_yaw - vision_control.imu_absolution_angle.yaw) <= ALLOW_ATTACK_ERROR)) 
 		{

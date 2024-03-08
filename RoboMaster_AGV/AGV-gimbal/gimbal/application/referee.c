@@ -183,11 +183,11 @@ uint8_t get_robot_id(void)
     return robot_state.robot_id;
 }
 
-void get_shoot_heat_limit_and_heat(uint16_t *heat_limit, uint16_t *heat)
-{
-    *heat_limit = robot_state.shooter_id1_42mm_cooling_limit;
-    *heat = power_heat_data_t.shooter_id1_42mm_cooling_heat;
-}
+// void get_shoot_heat_limit_and_heat(uint16_t *heat_limit, uint16_t *heat)
+// {
+//     *heat_limit = robot_state.shooter_id1_42mm_cooling_limit;
+//     *heat = power_heat_data_t.shooter_id1_42mm_cooling_heat;
+// }
 
 //获取机器人状态
 ext_game_robot_state_t* get_game_robot_status_point(void)

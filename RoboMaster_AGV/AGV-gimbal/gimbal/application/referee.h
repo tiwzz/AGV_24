@@ -32,11 +32,11 @@ typedef enum
     PROGRESS_CALCULATING = 5,
 } game_progress_t;
 
-//伤害类型
+// 伤害类型
 typedef enum
 {
-    ARMOR_HURT = 0x00,//装甲板伤害
-}hurt_type_t;
+    ARMOR_HURT = 0x00, // 装甲板伤害
+} hurt_type_t;
 typedef struct __attribute__((packed)) // 0001
 {
     uint8_t game_type : 4;
@@ -72,7 +72,7 @@ typedef struct __attribute__((packed)) // 0003
     uint16_t blue_outpost_HP;
     uint16_t blue_base_HP;
 } ext_game_robot_HP_t;
-typedef struct __attribute__((packed))// 0x0101
+typedef struct __attribute__((packed)) // 0x0101
 {
     uint32_t event_type;
 } ext_event_data_t;
@@ -102,21 +102,14 @@ typedef struct __attribute__((packed)) // 0x0201
 {
     uint8_t robot_id;
     uint8_t robot_level;
-    uint16_t remain_HP;
-    uint16_t max_HP;
-    uint16_t shooter_id1_17mm_cooling_rate;
-    uint16_t shooter_id1_17mm_cooling_limit;
-    uint16_t shooter_id1_17mm_speed_limit;
-    uint16_t shooter_id2_17mm_cooling_rate;
-    uint16_t shooter_id2_17mm_cooling_limit;
-    uint16_t shooter_id2_17mm_speed_limit;
-    uint16_t shooter_id1_42mm_cooling_rate;
-    uint16_t shooter_id1_42mm_cooling_limit;
-    uint16_t shooter_id1_42mm_speed_limit;
+    uint16_t current_HP;
+    uint16_t maximum_HP;
+    uint16_t shooter_barrel_cooling_value;
+    uint16_t shooter_barrel_heat_limit;
     uint16_t chassis_power_limit;
-    uint8_t mains_power_gimbal_output : 1;
-    uint8_t mains_power_chassis_output : 1;
-    uint8_t mains_power_shooter_output : 1;
+    uint8_t power_management_gimbal_output : 1;
+    uint8_t power_management_chassis_output : 1;
+    uint8_t power_management_shooter_output : 1;
 } ext_game_robot_state_t;
 
 typedef struct __attribute__((packed)) // 0x0202
@@ -125,7 +118,6 @@ typedef struct __attribute__((packed)) // 0x0202
     uint16_t chassis_current;
     float chassis_power;
     uint16_t chassis_power_buffer;
-
     uint16_t shooter_id1_17mm_cooling_heat;
     uint16_t shooter_id2_17mm_cooling_heat;
     uint16_t shooter_id1_42mm_cooling_heat;
@@ -135,24 +127,28 @@ typedef struct __attribute__((packed)) // 0x0203
 {
     float x;
     float y;
-    float z;
-    float yaw;
+    float angle;
 } ext_game_robot_pos_t;
 
 typedef struct __attribute__((packed)) // 0x0204
 {
-    uint8_t power_rune_buff;
+    uint8_t recovery_buff;
+    uint8_t cooling_buff;
+    uint8_t defence_buff;
+    uint8_t vulnerability_buff;
+    uint16_t attack_buff;
 } ext_buff_musk_t;
 
 typedef struct __attribute__((packed)) // 0x0205
 {
-    uint8_t attack_time;
+    uint8_t airforce_status;
+    uint8_t time_remain;
 } aerial_robot_energy_t;
 
 typedef struct __attribute__((packed)) // 0x0206
 {
-    uint8_t armor_type : 4;
-    uint8_t hurt_type : 4;
+ uint8_t armor_id : 4;
+ uint8_t HP_deduction_reason : 4;
 } ext_robot_hurt_t;
 
 typedef struct __attribute__((packed)) // 0x0207
@@ -163,7 +159,7 @@ typedef struct __attribute__((packed)) // 0x0207
     float bullet_speed;
 } ext_shoot_data_t;
 
-typedef struct __attribute__((packed))// 0x0208
+typedef struct __attribute__((packed)) // 0x0208
 {
     uint16_t bullet_remaining_num_17mm;
     uint16_t bullet_remaining_num_42mm;
@@ -211,8 +207,6 @@ typedef struct __attribute__((packed))
     uint16_t target_robot_ID;
 } ext_robot_command_t;
 
-
-
 extern ext_game_state_t game_state;
 extern ext_game_result_t game_result;
 extern ext_game_robot_HP_t game_robot_HP_t;
@@ -243,20 +237,19 @@ extern uint8_t get_robot_id(void);
 
 extern void get_shoot_heat_limit_and_heat(uint16_t *heat_limit, uint16_t *heat);
 
-//获取机器人状态指针
-ext_game_robot_state_t* get_game_robot_status_point(void);
-//获取伤害类型指针
-ext_robot_hurt_t* get_robot_hurt_point(void);
-//获取发射机构弹速
-ext_shoot_data_t* get_shoot_data_point(void);
-//获取机器人命令数据指针
-ext_robot_command_t* get_robot_command_point(void);
-//获取场地状态指针
-ext_event_data_t* get_field_event_point(void);
-//获取比赛机器血量指针
-ext_game_robot_HP_t* get_game_robot_HP_point(void);
-//获取机器人位置指针
-ext_game_robot_pos_t* get_game_robot_pos(void);
-
+// 获取机器人状态指针
+ext_game_robot_state_t *get_game_robot_status_point(void);
+// 获取伤害类型指针
+ext_robot_hurt_t *get_robot_hurt_point(void);
+// 获取发射机构弹速
+ext_shoot_data_t *get_shoot_data_point(void);
+// 获取机器人命令数据指针
+ext_robot_command_t *get_robot_command_point(void);
+// 获取场地状态指针
+ext_event_data_t *get_field_event_point(void);
+// 获取比赛机器血量指针
+ext_game_robot_HP_t *get_game_robot_HP_point(void);
+// 获取机器人位置指针
+ext_game_robot_pos_t *get_game_robot_pos(void);
 
 #endif
