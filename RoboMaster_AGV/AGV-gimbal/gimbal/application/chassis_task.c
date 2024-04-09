@@ -67,6 +67,8 @@ uint32_t chassis_high_water;
 
 extern gimbal_control_t gimbal_control;
 extern vision_rxfifo_t *vision_rx;
+int anglesr;
+extern ext_game_robot_state_t robot_state;
 chassis_move_t chassis_move; // 底盘运动数据
 /**
  * @brief          底盘任务，间隔 CHASSIS_CONTROL_TIME_MS 2ms
@@ -91,7 +93,7 @@ void chassis_task(void const *pvParameters)
             // 底盘控制量设置
             chassis_set_contorl(&chassis_move);
 
-            if (toe_is_error(DBUS_TOE))
+            if (toe_is_error(DBUS_TOE) || robot_state.power_management_chassis_output == 0)
             {
                 // 当遥控器离线发送控制信号为零
                 can_comm_board(0, 0, 0, 0);
@@ -101,7 +103,7 @@ void chassis_task(void const *pvParameters)
                 // 发送控制数据
                 can_comm_board(chassis_move.chassis_relative_ecd, chassis_move.vx_set, chassis_move.vy_set, chassis_move.chassis_behaviour);
                 can_comm_referee((int16_t)(power_heat_data_t.chassis_power * 100), power_heat_data_t.chassis_power_buffer,
-                                 gimbal_control.key_C, robot_state.chassis_power_limit);
+                                 gimbal_control.CAP_Output, robot_state.chassis_power_limit);
             }
             // 系统延时
             vTaskDelay(CHASSIS_CONTROL_TIME_MS);
@@ -153,42 +155,29 @@ static void chassis_set_mode(chassis_move_t *chassis_move_mode)
     {
         return;
     }
-    // remote control  set chassis behaviour mode
-    // 遥控器设置模式
-    /*     if (switch_is_down(chassis_move_mode->chassis_RC->rc.s[CHASSIS_MODE_CHANNEL]))
-        {
-            // 遥控器拨到下侧挡位为底盘无力模式
-            chassis_move_mode->chassis_behaviour = CHASSIS_ZERO_FORCE;
-        }
-        else if (switch_is_mid(chassis_move_mode->chassis_RC->rc.s[CHASSIS_MODE_CHANNEL]) || switch_is_up(chassis_move_mode->chassis_RC->rc.s[CHASSIS_MODE_CHANNEL]))
-        {
-            // 遥控器中挡以及上档为底盘有力模式
-            if (switch_is_down(chassis_move_mode->chassis_RC->rc.s[CHASSIS_RUN_MODE_CHANNEL]))
-            {
-                //舵跟随云台
-                chassis_move_mode->chassis_behaviour = CHASSIS_RUDDER_FOLLOW_GIMBAL_YAW;
-            }
-            else if (switch_is_mid(chassis_move_mode->chassis_RC->rc.s[CHASSIS_RUN_MODE_CHANNEL]))
-            {
-                //底盘跟随云台
-                chassis_move_mode->chassis_behaviour = CHASSIS_FOLLOW_GIMBAL_YAW;
-            }
-            else if (switch_is_up(chassis_move_mode->chassis_RC->rc.s[CHASSIS_RUN_MODE_CHANNEL]))
-            {
-                // 陀螺
-                chassis_move_mode->chassis_behaviour = CHASSIS_SPIN;
-            }
-        } */
 
-    static int mode = 0;
+    static int mode = RC_Control;
+    static int last_Key_F = 0;
+    static int chassis_spin_flag = 0;
+
     if (chassis_move_mode->chassis_RC->key.v & KEY_PRESSED_OFFSET_B)
     {
-        mode = 1;
+        mode = RUDDER_FOLLOW_GIMBAL;
     }
     if (chassis_move_mode->chassis_RC->key.v & KEY_PRESSED_OFFSET_V)
     {
-        mode = 2;
+        mode = CHASSIS_FOLLOW_GIMBAL;
     }
+
+    // F一键小陀螺
+    if (!last_Key_F && chassis_move_mode->chassis_RC->key.v & KEY_PRESSED_OFFSET_F)
+    {
+        mode = CHASSIS_SPIN;
+        chassis_spin_flag = !chassis_spin_flag;
+    }
+    last_Key_F = chassis_move_mode->chassis_RC->key.v & KEY_PRESSED_OFFSET_F;
+
+    
     // remote control  set chassis behaviour mode
     // 遥控器设置模式
     if (switch_is_down(chassis_move_mode->chassis_RC->rc.s[CHASSIS_MODE_CHANNEL]))
@@ -198,7 +187,7 @@ static void chassis_set_mode(chassis_move_t *chassis_move_mode)
     }
     else if (switch_is_mid(chassis_move_mode->chassis_RC->rc.s[CHASSIS_MODE_CHANNEL]) || switch_is_up(chassis_move_mode->chassis_RC->rc.s[CHASSIS_MODE_CHANNEL]))
     {
-        if (mode == 0)
+        if (mode == RC_Control)
         {
             // 遥控器中挡以及上档为底盘有力模式
             if (switch_is_down(chassis_move_mode->chassis_RC->rc.s[CHASSIS_RUN_MODE_CHANNEL]))
@@ -219,45 +208,35 @@ static void chassis_set_mode(chassis_move_t *chassis_move_mode)
         }
         else
         {
-            if (mode == 1)
+            if (mode == RUDDER_FOLLOW_GIMBAL)
             {
                 chassis_move_mode->chassis_behaviour = CHASSIS_RUDDER_FOLLOW_GIMBAL_YAW;
             }
-            else if (mode == 2)
+            else if (mode == CHASSIS_FOLLOW_GIMBAL)
             {
                 chassis_move_mode->chassis_behaviour = CHASSIS_FOLLOW_GIMBAL_YAW;
             }
-
-            if (chassis_move_mode->chassis_RC->key.v & KEY_PRESSED_OFFSET_F)
+            else if (chassis_spin_flag)
             {
                 chassis_move_mode->chassis_behaviour = CHASSIS_SPIN;
             }
+            else
+            {
+                chassis_move_mode->chassis_behaviour = CHASSIS_RUDDER_FOLLOW_GIMBAL_YAW;
+            }
 
+            // 按shift超电加速
             if (chassis_move_mode->chassis_RC->key.v & KEY_PRESSED_OFFSET_SHIFT)
             {
-                gimbal_control.key_C = 8000;
+                gimbal_control.CAP_Output = CAP_OUTPUT_to_CHASSIS;
             }
-            else 
+            else
             {
-                gimbal_control.key_C = 0;
+                gimbal_control.CAP_Output = 0;
             }
         }
     }
     else if (toe_is_error(DBUS_TOE))
-    {
-        // 无信号, 底盘无力
-        //  chassis_move_mode->chassis_behaviour = CHASSIS_ZERO_FORCE;
-        chassis_move_mode->chassis_behaviour = CHASSIS_NO_MOVE;
-    }
-    //    else
-    //    {
-    //        //其他底盘无力
-    //        // chassis_move_mode->chassis_behaviour = CHASSIS_ZERO_FORCE;
-    //        chassis_move_mode->chassis_behaviour = CHASSIS_NO_MOVE;
-    //    }
-    // when gimbal in some mode, such as init mode, chassis must's move
-    // 当云台在某些模式下，像初始化， 底盘不动
-    if (gimbal_cmd_to_chassis_stop())
     {
         chassis_move_mode->chassis_behaviour = CHASSIS_NO_MOVE;
     }
@@ -272,7 +251,7 @@ static void chassis_set_contorl(chassis_move_t *chassis_move_control)
 {
     fp32 vx_set_channel_RC, vy_set_channel_RC;
     int16_t vx_channel_RC, vy_channel_RC;
-    // deadline, because some remote control need be calibrated,  the value of rocker is not zero in middle place,
+
     // 死区限制，因为遥控器可能存在差异 摇杆在中间，其值不为0
     rc_deadband_limit(chassis_move_control->chassis_RC->rc.ch[CHASSIS_X_CHANNEL], vx_channel_RC, CHASSIS_RC_DEADLINE);
     rc_deadband_limit(chassis_move_control->chassis_RC->rc.ch[CHASSIS_Y_CHANNEL], vy_channel_RC, CHASSIS_RC_DEADLINE);
@@ -312,11 +291,8 @@ static void chassis_set_contorl(chassis_move_t *chassis_move_control)
     else
     {
         chassis_move_control->vx_set = 0;
-
     }
-    //			    //设置速度
-    //    chassis_move_control->vx_set += vx_set_channel_RC;
-    //    chassis_move_control->vy_set += vy_set_channel_RC;
+
     if (vision_rx->vx != 0 || vision_rx->vy != 0)
     {
         chassis_move_control->vx_set = (vision_rx->vx) * 2;

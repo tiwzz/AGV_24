@@ -41,6 +41,8 @@ typedef enum
     CAN_SHOOT_ALL_ID = 0x1FF,
     CAN_3508_S1_ID = 0x205,
     CAN_3508_S2_ID = 0x206,
+
+    cap_voltage_ID = 0x221,
 } can_msg_id_e;
 
 //can通信任务结构体

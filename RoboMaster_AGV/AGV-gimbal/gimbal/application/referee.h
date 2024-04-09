@@ -114,13 +114,13 @@ typedef struct __attribute__((packed)) // 0x0201
 
 typedef struct __attribute__((packed)) // 0x0202
 {
-    uint16_t chassis_volt;
-    uint16_t chassis_current;
-    float chassis_power;
-    uint16_t chassis_power_buffer;
-    uint16_t shooter_id1_17mm_cooling_heat;
-    uint16_t shooter_id2_17mm_cooling_heat;
-    uint16_t shooter_id1_42mm_cooling_heat;
+ uint16_t chassis_volt;
+ uint16_t chassis_current;
+ float chassis_power;
+ uint16_t chassis_power_buffer;
+ uint16_t shooter_17mm_1_barrel_heat;
+ uint16_t shooter_17mm_2_barrel_heat;
+ uint16_t shooter_42mm_barrel_heat;
 } ext_power_heat_data_t;
 
 typedef struct __attribute__((packed)) // 0x0203

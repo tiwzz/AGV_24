@@ -39,6 +39,16 @@
 #define switch_is_mid(s)        (s == RC_SW_MID)
 #define switch_is_up(s)         (s == RC_SW_UP)
 /* ----------------------- PC Key Definition-------------------------------- */
+/*
+（C）——拨弹盘回拨
+（Q）——爆发模式
+（R）——摩擦轮开关
+（shift）——长按超电
+（F）——短触小陀螺
+（鼠标右键）——自瞄
+（V）——底盘跟随云台
+（B）——舵跟随云台
+*/
 #define KEY_PRESSED_OFFSET_W            ((uint16_t)1 << 0)
 #define KEY_PRESSED_OFFSET_S            ((uint16_t)1 << 1)
 #define KEY_PRESSED_OFFSET_A            ((uint16_t)1 << 2)
@@ -86,4 +96,5 @@ extern uint8_t RC_data_is_error(void);
 extern void slove_RC_lost(void);
 extern void slove_data_error(void);
 extern void sbus_to_usart1(uint8_t *sbus);
+extern RC_ctrl_t rc_ctrl;
 #endif

@@ -13,7 +13,7 @@
 #define COOL_FIRST_SPEED_LIMIT_ELSE_MAX_CONTROL_SPEED 2000
 
 //允许发弹角度误差 rad
-#define ALLOW_ATTACK_ERROR 0.04f
+// #define ALLOW_ATTACK_ERROR 0.04f//0.04f
 //射速15
 #define SHOOT_SPEED_15 2.0f
 //射速18
@@ -169,6 +169,6 @@ typedef struct
 
 extern void shoot_init(void);
 extern void shoot_control_loop(void);
+extern void vision_shoot_judge(vision_control_t* shoot_judge, fp32 vision_begin_add_yaw_angle, fp32 vision_begin_add_pitch_angle, fp32 target_distance);
 void shoot_task(void const *pvParameters);
-
 #endif

@@ -501,6 +501,8 @@ static void gimbal_RC_control(fp32 *yaw, fp32 *pitch, gimbal_control_t *gimbal_c
     rc_add_yaw = -yaw_channel * YAW_MOUSE_SEN;
     rc_add_pit = pitch_channel * PITCH_MOUSE_SEN;
 
+
+    //导航行走时设置的低速模式
     if (vision_rx->ang_z != 0)
     {
         *yaw = ((vision_rx->ang_z) * 0.000264f) * 1; // rc_add_yaw  +rc_add_yaw_RC *0.8;

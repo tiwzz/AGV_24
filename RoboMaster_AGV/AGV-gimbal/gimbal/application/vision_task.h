@@ -21,11 +21,11 @@
 #include "remote_control.h"
 
 //允许发弹角度误差 rad
-#define ALLOW_ATTACK_ERROR 0.04f
+#define ALLOW_ATTACK_ERROR 0.045f//0.04f
 //允许发弹距离 m 
 #define ALLOW_ATTACK_DISTANCE 10.0f
 //允许发弹概率
-#define ALLOE_ATTACK_P 3.0f
+#define ALLOE_ATTACK_P 10.0f
 
 
 //延时等待
@@ -63,17 +63,17 @@
 //最大迭代次数
 #define MAX_ITERATE_COUNT 20
 //视觉计算时间
-#define VISION_CALC_TIME 0.003f
+#define VISION_CALC_TIME 0.0005f//0.003f
 
 //比例补偿器比例系数
 #define ITERATE_SCALE_FACTOR 0.3f
 //重力加速度
-#define GRAVITY 9.7988f
+#define GRAVITY 9.8035f//9.7988f
 
 //固有时间偏移即上位机计算时间单位ms
 #define TIME_BIAS 6
 //机器人自身固有时间偏差
-#define ROBOT_TIMR_BIAS 160//135//慢速小100//小陀螺250//平移100//20
+#define ROBOT_TIMR_BIAS 20
 //偏差时间队列大小
 #define TIME_BIAS_QUEUE_CAPACITY 10 
 
@@ -83,14 +83,14 @@
  
 #endif // !TIME_MS_TO_S(x)
 
-//全圆弧度
+//全圆弧度0
 #define ALL_CIRCLE (2 * PI)
 
 // 击打敌方机器人0.1
 //imu到枪口的竖直距离
-#define Z_STATIC 0.03955f//0.1f
+#define Z_STATIC 0.04585f//（待测0.04585f）//0.04895f
 //枪口前推距离
-#define DISTANCE_STATIC 0.15733f//0.21085f
+#define DISTANCE_STATIC 0.00974f//（待测0.00974f）//0.00944f
 //初始飞行时间
 #define INIT_FILIGHT_TIME 0.5f
 

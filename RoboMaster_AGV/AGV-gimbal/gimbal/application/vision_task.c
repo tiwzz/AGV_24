@@ -68,6 +68,9 @@ vision_control_t vision_control = { 0 };
 // 视觉接收结构体
 vision_receive_t vision_receive = { 0 };
 
+
+fp32 watch_pitch = 0;
+fp32 watch_yaw = 0;
 void vision_task(void const* pvParameters)
 {
     // 延时等待，等待上位机发送数据成功
@@ -329,46 +332,46 @@ static void vision_judge_appear_target(vision_control_t* judge_appear_target)
             //判断识别目标装甲板类型
             if (judge_appear_target->target_armor_id == ARMOR_ALL_ROBOT) //识别全部机器人
             {
-                //筛选掉基地和前哨站
-                if (judge_appear_target->target_data.id == ARMOR_BASE || judge_appear_target->target_data.id == ARMOR_OUTPOST)
-                {
-                    //设置不识别目标
-                    judge_appear_target->vision_target_appear_state = TARGET_UNAPPEAR;
-                }
-                else
-                {
+                // //筛选掉基地和前哨站
+                // if (judge_appear_target->target_data.id == ARMOR_BASE || judge_appear_target->target_data.id == ARMOR_OUTPOST)
+                // {
+                //     //设置不识别目标
+                //     judge_appear_target->vision_target_appear_state = TARGET_UNAPPEAR;
+                // }
+                // else
+                // {
 
                     // 设置为识别到目标
                     judge_appear_target->vision_target_appear_state = TARGET_APPEAR;
 
                     // 判断当前模式为袭击对方机器人
-                    if (judge_appear_target->robot_mode == ATTACK_ENEMY_ROBOT)
-                    {
+                    // if (judge_appear_target->robot_mode == ATTACK_ENEMY_ROBOT)
+                    // {
                         // 判断目标是否为哨兵 -- 分析是否要进行击打
-                        if (judge_appear_target->target_data.id == ARMOR_GUARD)
-                        {
-                            // 若敌方前哨站存活，则去掉哨兵这一目标
-                            // 根据己方装甲板颜色，判断敌方前哨站是否摧毁
-                            if (judge_appear_target->detect_armor_color == BLUE)
-                            {
-                                // 蓝色
-                                if (judge_appear_target->game_robot_HP_point->blue_outpost_HP > 1)
-                                {
-                                    // 敌方前哨站存活 -- 不击打哨兵
-                                    judge_appear_target->vision_target_appear_state = TARGET_UNAPPEAR;
-                                }
-                            }
-                            else if (judge_appear_target->detect_armor_color == RED)
-                            {
-                                // 红色
-                                if (judge_appear_target->game_robot_HP_point->red_outpost_HP > 1)
-                                {
-                                    judge_appear_target->vision_target_appear_state = TARGET_UNAPPEAR;
-                                }
-                            }
-                        }
-                    }
-               }
+                        // if (judge_appear_target->target_data.id == ARMOR_GUARD)
+                        // {
+                        //     // 若敌方前哨站存活，则去掉哨兵这一目标
+                        //     // 根据己方装甲板颜色，判断敌方前哨站是否摧毁
+                        //     if (judge_appear_target->detect_armor_color == BLUE)
+                        //     {
+                        //         // 蓝色
+                        //         if (judge_appear_target->game_robot_HP_point->blue_outpost_HP > 1)
+                        //         {
+                        //             // 敌方前哨站存活 -- 不击打哨兵
+                        //             judge_appear_target->vision_target_appear_state = TARGET_UNAPPEAR;
+                        //         }
+                        //     }
+                        //     else if (judge_appear_target->detect_armor_color == RED)
+                        //     {
+                        //         // 红色
+                        //         if (judge_appear_target->game_robot_HP_point->red_outpost_HP > 1)
+                        //         {
+                        //             judge_appear_target->vision_target_appear_state = TARGET_UNAPPEAR;
+                        //         }
+                        //     }
+                        // }
+                    // }
+            //    }
             }
             else //识别特定数字
             {
@@ -491,7 +494,9 @@ void vision_shoot_judge(vision_control_t* shoot_judge, fp32 vision_begin_add_yaw
         //远距离不击打
         shoot_judge->shoot_vision_control.shoot_command = SHOOT_STOP_ATTACK;
     }
-
+						
+						watch_pitch = fabs(vision_begin_add_pitch_angle);
+						watch_yaw = fabs(vision_begin_add_yaw_angle);
 }
 
 static void set_vision_send_packet(vision_control_t* set_send_packet)
