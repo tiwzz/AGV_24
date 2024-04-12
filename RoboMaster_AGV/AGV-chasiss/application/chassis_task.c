@@ -250,8 +250,11 @@ static void chassis_init(chassis_move_t *chassis_move_init)
 	// 遥控器数据指针获取
 	chassis_move_init->chassis_rc_ctrl = get_remote_control_point();
 	// 斜坡函数初始化
-	 ramp_init(&chassis_move_init->vx_ramp, 0.010f, 20, -20);
-   ramp_init(&chassis_move_init->vy_ramp, 0.010f, 10, -10);
+	 ramp_init(&chassis_move_init->vx_ramp, 0.030f, 20, -20);
+   ramp_init(&chassis_move_init->vy_ramp, 0.030f, 10, -10);
+	
+	 ramp_init_2(&chassis_move_init->vx_ramp_2, 0.12f, 0.12f);//0.06
+   ramp_init_2(&chassis_move_init->vy_ramp_2, 0.12f, 0.12f);
 	// 轮电机转动方向初始化
 	chassis_move_init->Forward_L.Judge_Speed_Direction = chassis_move_init->Forward_R.Judge_Speed_Direction =
 		chassis_move_init->Back_L.Judge_Speed_Direction = chassis_move_init->Back_R.Judge_Speed_Direction = 1.0f;
@@ -983,15 +986,24 @@ void chassis_rc_to_control_vector(fp32 *vx_set, fp32 *vy_set, chassis_move_t *ch
 
 
 	// 斜波函数作为底盘速度输入
-//    ramp_calc(&chassis_move_rc_to_vector->vx_ramp, -chassis_move_rc_to_vector->vx_set_CANsend/100);
-//    ramp_calc(&chassis_move_rc_to_vector->vy_ramp, -chassis_move_rc_to_vector->vy_set_CANsend/100);
+	//中科斜波
+//   ramp_calc_2(&chassis_move_rc_to_vector->vx_ramp_2,-chassis_move_rc_to_vector->vx_set_CANsend/100);
+//   ramp_calc_2(&chassis_move_rc_to_vector->vy_ramp_2,-chassis_move_rc_to_vector->vy_set_CANsend/100);
 //	
-//	*vx_set += chassis_move_rc_to_vector->vx_ramp.out;
-//	*vy_set += chassis_move_rc_to_vector->vy_ramp.out;
-
+//	*vx_set = chassis_move_rc_to_vector->vx_ramp_2.out;
+//	*vy_set = chassis_move_rc_to_vector->vy_ramp_2.out;
+//	
+	//什么都不加
 *vx_set += -chassis_move_rc_to_vector->vx_set_CANsend / 100;
 *vy_set += -chassis_move_rc_to_vector->vy_set_CANsend / 100;
 
+//	//第一版斜波
+//   ramp_calc(&chassis_move_rc_to_vector->vx_ramp,-chassis_move_rc_to_vector->vx_set_CANsend/100);
+//   ramp_calc(&chassis_move_rc_to_vector->vy_ramp,-chassis_move_rc_to_vector->vy_set_CANsend/100);
+//	
+//	*vx_set = chassis_move_rc_to_vector->vx_ramp.out;
+//	*vy_set = chassis_move_rc_to_vector->vy_ramp.out;
+//	
 	
 	*vx_set = kx * (*vx_set);
 	*vy_set = ky * (*vy_set);

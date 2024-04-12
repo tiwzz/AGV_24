@@ -31,6 +31,94 @@ void ramp_init(ramp_function_source_t *ramp_source_type, fp32 frame_period, fp32
     ramp_source_type->out = 0.0f;
 }
 
+void ramp_init_2(ramp_function_source_t_2 *ramp_source_type, float Increase_Value ,float Decrease_Value )
+{
+	ramp_source_type->Increase_Value = Increase_Value;
+	ramp_source_type->Decrease_Value = Decrease_Value;
+	ramp_source_type->current_velocity = 0;
+}
+
+void ramp_calc_2(ramp_function_source_t_2 *ramp_source_type,fp32 target)
+{
+	if (ramp_source_type->current_velocity > 0.0f)
+	{
+		if(target > ramp_source_type->current_velocity)
+		{
+			if(fabs(ramp_source_type->current_velocity - target) > ramp_source_type->Increase_Value)
+			{
+				ramp_source_type->out += ramp_source_type->Increase_Value;
+			}
+			else
+			{
+				ramp_source_type->out = target;
+			}
+		}
+		else if(target < ramp_source_type->current_velocity)
+		{
+			if(fabs(ramp_source_type->current_velocity - target) > ramp_source_type->Decrease_Value)
+			{
+				ramp_source_type->out -= ramp_source_type->Decrease_Value;
+			}
+			else
+			{
+				ramp_source_type->out = target;
+			}
+		}
+	}
+	else if(ramp_source_type->current_velocity < 0.0f)
+	{
+		if (target < ramp_source_type->current_velocity)
+		{
+			if (fabs(ramp_source_type->current_velocity - target) > ramp_source_type ->Increase_Value)
+			{
+				ramp_source_type->out -= ramp_source_type->Increase_Value;
+			}
+			else
+			{
+				ramp_source_type->out = target;
+			}
+		}
+		else if(target > ramp_source_type->current_velocity)
+		{
+			if (fabs(ramp_source_type->current_velocity - target) > ramp_source_type->Decrease_Value)
+			{
+				ramp_source_type->out += ramp_source_type->Decrease_Value;
+			}
+			else
+			{
+				ramp_source_type->out = target;
+			}
+		}
+	}
+	else
+	{
+		if (target > ramp_source_type->current_velocity)
+		{
+				if(fabs(ramp_source_type->current_velocity - target) > ramp_source_type->Increase_Value)
+				{
+					ramp_source_type->out += ramp_source_type->Increase_Value;
+				}
+				else
+				{
+					ramp_source_type->out = target;
+				}
+		}
+		else if(target < ramp_source_type->current_velocity)
+		{
+			if (fabs(ramp_source_type->current_velocity - target) > ramp_source_type->Decrease_Value)
+			{
+				ramp_source_type->out -= ramp_source_type->Decrease_Value;
+			}
+			else
+			{
+				ramp_source_type->out = target;
+			}
+		}
+	}
+	ramp_source_type->current_velocity = ramp_source_type->out;
+}
+
+
 /**
   * @brief          斜波函数计算，根据输入的值进行叠加， 输入单位为 /s 即一秒后增加输入的值
   * @author         RM 1.0

@@ -287,6 +287,9 @@ typedef struct
 		ramp_function_source_t vx_ramp;   //Ð±ÆÂº¯Êý
 		ramp_function_source_t vy_ramp;
 		
+		ramp_function_source_t_2 vx_ramp_2;   //Ð±ÆÂº¯Êý
+		ramp_function_source_t_2 vy_ramp_2;
+		
 		fp32 rudder_given_current[4];
 		fp32 rudder_speed[4];
 }chassis_move_t;

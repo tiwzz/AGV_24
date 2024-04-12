@@ -12,6 +12,17 @@ typedef __packed struct
 		fp32 slide[8] ;    //滑动滤波数组
 } ramp_function_source_t;
 
+//斜波函数升级版
+typedef __packed struct
+{		
+		fp32 target;        //目标值
+		fp32 current_velocity;   //当前速度
+    float Decrease_Value;    //每周期减小的最小值
+    float Increase_Value;    //每周期增大的最大值
+		fp32 out;          //输出数据
+} ramp_function_source_t_2;
+
+
 typedef __packed struct
 {
     fp32 input;        //输入数据
@@ -24,7 +35,8 @@ extern fp32 invSqrt(fp32 num);
 
 //斜波函数初始化
 void ramp_init(ramp_function_source_t *ramp_source_type, fp32 frame_period, fp32 max, fp32 min);
-
+void ramp_init_2(ramp_function_source_t_2 *ramp_source_type, float Increase_Value ,float Decrease_Value );
+void ramp_calc_2(ramp_function_source_t_2 *ramp_source_type,fp32 target);
 //斜波函数计算
 void ramp_calc(ramp_function_source_t *ramp_source_type, fp32 input);
 //一阶滤波初始化
