@@ -230,6 +230,10 @@ static void chassis_set_mode(chassis_move_t *chassis_move_mode)
             {
                 gimbal_control.CAP_Output = CAP_OUTPUT_to_CHASSIS;
             }
+						else if(chassis_move_mode->chassis_RC->key.v & KEY_PRESSED_OFFSET_E)
+						{
+								gimbal_control.CAP_Output = CAP_OUTPUT_to_CHASSIS_FLY;
+						}
             else
             {
                 gimbal_control.CAP_Output = 0;

@@ -178,9 +178,9 @@ void shoot_level(void)
 	KH = 1.1;
 	fric = 2.9f;
 	if (fric_move.shoot_rc->key.v & KEY_PRESSED_OFFSET_Q)
-		trigger_motor.speed_set = -15.0;
+		trigger_motor.speed_set = -20.0;
 	else
-		trigger_motor.speed_set = -10.0;
+		trigger_motor.speed_set = -15.0;//-10.0
 }
 
 /**
@@ -383,7 +383,31 @@ void shoot_control_loop(void)
 static void shoot_bullet_control(void)
 {
 	//                vision_shoot_judge(&vision_control, vision_control.gimbal_vision_control.gimbal_yaw - vision_control.imu_absolution_angle.yaw, vision_control.gimbal_vision_control.gimbal_pitch - vision_control.imu_absolution_angle.pitch, sqrt(pow(vision_control.target_data.x, 2) + pow(vision_control.target_data.y, 2)));
-	if ((robot_state.shooter_barrel_heat_limit - power_heat_data_t.shooter_17mm_1_barrel_heat > 20 || fric_move.shoot_rc->key.v & KEY_PRESSED_OFFSET_Q) && (fric_move.shoot_rc->rc.ch[4] > 50||gimbal_behaviour == GIMBAL_AUTO_ATTACK && vision_control.shoot_vision_control.shoot_command == SHOOT_ATTACK|| fric_move.shoot_rc->mouse.press_l )) //&& (fabs(vision_control.gimbal_vision_control.gimbal_pitch - vision_control.imu_absolution_angle.pitch) <= ALLOW_ATTACK_ERROR && fabs(vision_control.gimbal_vision_control.gimbal_yaw - vision_control.imu_absolution_angle.yaw) <= ALLOW_ATTACK_ERROR))
+	
+	if(fric_move.shoot_rc->key.v & KEY_PRESSED_OFFSET_Q)
+	{
+		if (robot_state.shooter_barrel_heat_limit - power_heat_data_t.shooter_17mm_1_barrel_heat > 60 && fric_move.shoot_rc->mouse.press_l ) //&& (fabs(vision_control.gimbal_vision_control.gimbal_pitch - vision_control.imu_absolution_angle.pitch) <= ALLOW_ATTACK_ERROR && fabs(vision_control.gimbal_vision_control.gimbal_yaw - vision_control.imu_absolution_angle.yaw) <= ALLOW_ATTACK_ERROR))
+		{
+			//自动火控
+			if (gimbal_behaviour == GIMBAL_AUTO_ATTACK && vision_control.shoot_vision_control.shoot_command == SHOOT_ATTACK)
+			{
+				trigger_motor.set_angle = rad_format(trigger_motor.set_angle + PI_Four);
+				trigger_motor.cmd_time = xTaskGetTickCount();
+				trigger_motor.move_flag = 0;
+			}
+			else if (shoot_mode == SHOOT_BULLET && trigger_motor.move_flag == 1 && flag == 0)
+			{
+				trigger_motor.set_angle = rad_format(trigger_motor.set_angle + PI_Four);
+				trigger_motor.cmd_time = xTaskGetTickCount();
+				trigger_motor.move_flag = 0;
+			}
+		}
+		else
+		{
+		trigger_motor.speed_set = 0;
+		}
+	}
+	else if ((robot_state.shooter_barrel_heat_limit - power_heat_data_t.shooter_17mm_1_barrel_heat > 30 || fric_move.shoot_rc->key.v & KEY_PRESSED_OFFSET_Q) && (fric_move.shoot_rc->rc.ch[4] > 50||gimbal_behaviour == GIMBAL_AUTO_ATTACK && vision_control.shoot_vision_control.shoot_command == SHOOT_ATTACK|| fric_move.shoot_rc->mouse.press_l )) //&& (fabs(vision_control.gimbal_vision_control.gimbal_pitch - vision_control.imu_absolution_angle.pitch) <= ALLOW_ATTACK_ERROR && fabs(vision_control.gimbal_vision_control.gimbal_yaw - vision_control.imu_absolution_angle.yaw) <= ALLOW_ATTACK_ERROR))
 	{
 		//自动火控
 		if (gimbal_behaviour == GIMBAL_AUTO_ATTACK && vision_control.shoot_vision_control.shoot_command == SHOOT_ATTACK)

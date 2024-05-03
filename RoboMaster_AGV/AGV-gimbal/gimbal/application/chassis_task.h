@@ -37,6 +37,7 @@
 #define CHASSIS_RC_DEADLINE 30
 //开启超电时的放电大小参数
 #define CAP_OUTPUT_to_CHASSIS 8000
+#define CAP_OUTPUT_to_CHASSIS_FLY 7000
 // 底盘任务控制间隔 2ms
 #define CHASSIS_CONTROL_TIME_MS 2
 // 底盘任务控制间隔 0.002s

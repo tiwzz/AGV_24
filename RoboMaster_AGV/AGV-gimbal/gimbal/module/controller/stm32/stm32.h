@@ -97,7 +97,7 @@ extern ExtU_stm32 stm32_U;
 
 /* External outputs (root outports fed by signals with default storage) */
 extern ExtY_stm32 stm32_Y;
-
+extern ExtY_stm32 stm32_Y_pitch;
 /* Model entry point functions */
 extern void stm32_initialize(void);
 extern void stm32_step(fp32 angle_set,fp32 angle_feedback,fp32 speed_feedback);

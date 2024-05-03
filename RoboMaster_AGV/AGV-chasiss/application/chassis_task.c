@@ -422,14 +422,7 @@ static void chassis_set_contorl(chassis_move_t *chassis_move_control)
 		chassis_move_control->vx_set = cos_yaw * vx_set + sin_yaw * vy_set;
 		chassis_move_control->vy_set = -1.0f * sin_yaw * vx_set + cos_yaw * vy_set;
 
-		if (fabs(relative_angle) < 0.10 && (chassis_move_control->vx_set_CANsend == 0.0f && chassis_move_control->vy_set_CANsend == 0.0f)) // 一般情况下不抱圆，起步速度更快
-		{
-			chassis_move_control->wz_set = 0;
-		}
-		else
-		{
-			chassis_move_control->wz_set = -PID_Calc(&chassis_move_control->chassis_angle_pid, relative_angle, chassis_move_control->chassis_relative_angle_set);
-		}
+		chassis_move_control->wz_set = -PID_Calc(&chassis_move_control->chassis_angle_pid, relative_angle, chassis_move_control->chassis_relative_angle_set);
 	}
 	
 	
@@ -479,13 +472,13 @@ static void chassis_set_contorl(chassis_move_t *chassis_move_control)
 
 		if (fabs(chassis_move_control->vx_set_CANsend) > 50 || fabs(chassis_move_control->vy_set_CANsend) > 50)
 		{
-			chassis_move_control->wz_set *= 1.5f;
+			chassis_move_control->wz_set *= 1.2f;
 			chassis_move_control->vx_set *= 1.0f;
 			chassis_move_control->vy_set *= 1.0f;
 		}
 		else // 当原地时，加大转速
 		{
-			chassis_move_control->wz_set *= 1.5f;
+			chassis_move_control->wz_set *= 2.0f;
 		}
 	}
 	else if (chassis_move_control->chassis_motor_mode == CHASSIS_VECTOR_NO_FOLLOW_YAW)
@@ -812,19 +805,21 @@ void CHASSIC_MOTOR_POWER_CONTROL(chassis_move_t *chassis_motor)
 	uint16_t max_power_limit = 40;
 	fp32 input_power = 0;		 // 输入功率(缓冲能量环)
 	fp32 scaled_motor_power[4];
-
+	fp32 power_scale = 0;
+	
 	chassis_motor->power_control.POWER_MAX = 0; //最终底盘的最大功率初始化
 	chassis_motor->power_control.forecast_total_power = 0; // 预测总功率初始化
 	
-	PID_Calc(&chassis_motor->buffer_pid, chassis_motor->chassis_power_buffer, 35); //使缓冲能量维持在一个稳定的范围
+	PID_Calc(&chassis_motor->buffer_pid, chassis_motor->chassis_power_buffer, 20); //使缓冲能量维持在一个稳定的范围
 
 
-	max_power_limit = chassis_motor->chassis_power_MAX;  //获得裁判系统的功率限制数值
+      max_power_limit = chassis_motor->chassis_power_MAX;  //获得裁判系统的功率限制数值
+//   		max_power_limit = 120;  //获得裁判系统的功率限制数值
 	
 	input_power = max_power_limit - chassis_motor->buffer_pid.out; //通过裁判系统的最大功率
 
 	chassis_motor->power_control.power_charge = input_power * 100; //超级电容的最大充电功率
-	if(chassis_motor->power_control.power_charge < 30*100) chassis_motor->power_control.power_charge = 3000;//自制超电控制板最低充电功率
+	if(chassis_motor->power_control.power_charge < 30*100) chassis_motor->power_control.power_charge = 30*100;//自制超电控制板最低充电功率
 //	
 	if(chassis_motor->power_control.power_charge>130*100)		chassis_motor->power_control.power_charge =130*100; //参考超电控制板允许的最大充电功率，溪地板子的新老不一样
 	
@@ -838,23 +833,25 @@ void CHASSIC_MOTOR_POWER_CONTROL(chassis_move_t *chassis_motor)
 
 	if (get_cap.capvot > 15) // 当超电电压大于某个值(防止C620掉电)//手册极限为12V
 	{
-		if (chassis_move.key_C == 8000)   //主动超电，一般用于起步加速or冲刺or飞坡or上坡，chassis_move.key_C为此代码中超电开启按键
+		if (chassis_move.key_C == CAP_OUTPUT_to_CHASSIS_FLY)   //主动超电，用于上坡，平地加速
 		{
-			chassis_motor->power_control.POWER_MAX = 120;		
+			chassis_motor->power_control.POWER_MAX = 250;		
+		}
+		else if (chassis_move.key_C == CAP_OUTPUT_to_CHASSIS)//主动超电，用于飞坡
+		{
+			chassis_motor->power_control.POWER_MAX = 120;	
 		}
 		else
 		{	
-				if (get_cap.capvot > 19) // 当超电电压大于某个值(防止C620掉电)//手册极限为12V
-	{
-			chassis_motor->power_control.POWER_MAX = input_power + 10;
+				if (get_cap.capvot > 19)
+					chassis_motor->power_control.POWER_MAX = input_power;
+				else	
+					chassis_motor->power_control.POWER_MAX = max_power_limit-5;
 		}
-	else	
-			chassis_motor->power_control.POWER_MAX = max_power_limit-10;
-	}
 	}
 	else
 	{
-		chassis_motor->power_control.POWER_MAX = max_power_limit - 20 ;
+		chassis_motor->power_control.POWER_MAX = max_power_limit-10 ;
 	}
 
 	for (uint8_t i = 0; i < 4; i++) // 获得所有3508电机的功率和总功率
@@ -869,13 +866,23 @@ void CHASSIC_MOTOR_POWER_CONTROL(chassis_move_t *chassis_motor)
 		chassis_motor->power_control.forecast_total_power += chassis_motor->power_control.forecast_motor_power[i];
 	}
 	
+//	if (chassis_motor->power_control.forecast_total_power > chassis_motor->power_control.POWER_MAX) // 超功率模型衰减
+//	{
+//	power_scale = chassis_motor->power_control.POWER_MAX / chassis_motor->power_control.forecast_total_power;
+//	}
+	//前后轮功率分配
+//	scaled_motor_power[0] = chassis_motor->power_control.forecast_total_power / 10 * 1.3f * power_scale; 
+//	scaled_motor_power[1] = chassis_motor->power_control.forecast_total_power / 10 * 1.7f * power_scale; 
+//	scaled_motor_power[2] = chassis_motor->power_control.forecast_total_power / 10 * 3.5f * power_scale; 
+//	scaled_motor_power[3] = chassis_motor->power_control.forecast_total_power / 10 * 3.5f * power_scale; 
+	
 	if (chassis_motor->power_control.forecast_total_power > chassis_motor->power_control.POWER_MAX) // 超功率模型衰减
 	{
 		fp32 power_scale = chassis_motor->power_control.POWER_MAX / chassis_motor->power_control.forecast_total_power;
 		for (uint8_t i = 0; i < 4; i++)
 		{
 			scaled_motor_power[i] = chassis_motor->power_control.forecast_motor_power[i] * power_scale; // 获得衰减后的功率
-			
+		
 			if (scaled_motor_power[i] < 0)		continue;
 
 			fp32 b = toque_coefficient * chassis_motor->motor_chassis[i].chassis_motor_measure->speed_rpm;
@@ -987,15 +994,15 @@ void chassis_rc_to_control_vector(fp32 *vx_set, fp32 *vy_set, chassis_move_t *ch
 
 	// 斜波函数作为底盘速度输入
 	//中科斜波
-//   ramp_calc_2(&chassis_move_rc_to_vector->vx_ramp_2,-chassis_move_rc_to_vector->vx_set_CANsend/100);
-//   ramp_calc_2(&chassis_move_rc_to_vector->vy_ramp_2,-chassis_move_rc_to_vector->vy_set_CANsend/100);
-//	
-//	*vx_set = chassis_move_rc_to_vector->vx_ramp_2.out;
-//	*vy_set = chassis_move_rc_to_vector->vy_ramp_2.out;
-//	
+   ramp_calc_2(&chassis_move_rc_to_vector->vx_ramp_2,-chassis_move_rc_to_vector->vx_set_CANsend/100);
+   ramp_calc_2(&chassis_move_rc_to_vector->vy_ramp_2,-chassis_move_rc_to_vector->vy_set_CANsend/100);
+	
+	*vx_set = chassis_move_rc_to_vector->vx_ramp_2.out;
+	*vy_set = chassis_move_rc_to_vector->vy_ramp_2.out;
+	
 	//什么都不加
-*vx_set += -chassis_move_rc_to_vector->vx_set_CANsend / 100;
-*vy_set += -chassis_move_rc_to_vector->vy_set_CANsend / 100;
+//*vx_set += -chassis_move_rc_to_vector->vx_set_CANsend / 100;
+//*vy_set += -chassis_move_rc_to_vector->vy_set_CANsend / 100;
 
 //	//第一版斜波
 //   ramp_calc(&chassis_move_rc_to_vector->vx_ramp,-chassis_move_rc_to_vector->vx_set_CANsend/100);

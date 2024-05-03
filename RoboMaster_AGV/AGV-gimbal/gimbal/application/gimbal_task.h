@@ -127,7 +127,7 @@
 #define GIMBAL_INIT_TIME            6000
 #define GIMBAL_CALI_REDUNDANT_ANGLE 0.1f
 //云台初始化回中值的速度以及控制到的角度
-#define GIMBAL_INIT_PITCH_SPEED     0.001f//0.003f
+#define GIMBAL_INIT_PITCH_SPEED     0.000f//0.003f
 #define GIMBAL_INIT_YAW_SPEED       0.005f
 
 #define INIT_YAW_SET    0.0f
@@ -160,11 +160,11 @@
 #define GIMBAL_PITCH_AUTO_SCAN_NUM 133.3f
 
 //云台pitch轴最大值相对角度  0x004D
-#define GIMBAL_PITCH_MAX_ENCODE 974//0x004D
+#define GIMBAL_PITCH_MAX_ENCODE 6696//0x004D
 //云台pitch轴最小相对角
-#define GIMBAL_PITCH_MIN_ENCODE 404//0x1796
+#define GIMBAL_PITCH_MIN_ENCODE 5748//0x1796
 //云台pitch轴中值
-#define GIMBAL_PITCH_OFFSET_ENCODE 707
+#define GIMBAL_PITCH_OFFSET_ENCODE 6205
 //云台yaw轴中值
 #define GIMBAL_YAW_OFFSET_ENCODE 7200
 //yaw轴后侧中值
@@ -211,12 +211,12 @@
 
 //角度误差项系数
 #define K_YAW_ANGLE_ERROR 	130000.0f//
-#define K_PITCH_ANGLE_ERROR 300000//300000.0f//
+#define K_PITCH_ANGLE_ERROR 330000//350000.0f//
 
 
 //速度项系数
 #define K_YAW_ANGLE_SPEED		5000.0f//
-#define K_PITCH_ANGLE_SPEED 9000.0f//
+#define K_PITCH_ANGLE_SPEED 9000.0f//5000
 
 //最大最小输出
 #define YAW_MAX_OUT 32000.0f

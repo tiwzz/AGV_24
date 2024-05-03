@@ -200,20 +200,15 @@ void gimbal_task(void const *pvParameters)
             gimbal_set_control(&gimbal_control);                 // 设置云台控制量
             gimbal_control_loop(&gimbal_control);                // 云台控制计算
 
-//            if (!(toe_is_error(YAW_GIMBAL_MOTOR_TOE) && toe_is_error(PITCH_GIMBAL_MOTOR_TOE)))
-//            {
                 if (toe_is_error(DBUS_TOE))
-                {
                     // 判断遥控器是否掉线
                     CAN_cmd_gimbal(0, 0);
-                }
                 else
                 {
+//									if(gimbal_control.gimbal_rc_ctrl->rc.s[1] == 2)
 //										CAN_cmd_gimbal(0, 0);
-									CAN_cmd_gimbal(gimbal_control.gimbal_yaw_motor.given_current, -gimbal_control.gimbal_pitch_motor.given_current);
-//									can_comm_referee((int16_t)(power_heat_data_t.chassis_power*100),power_heat_data_t.chassis_power_buffer,
-//																			gimbal_control.key_C,robot_state.chassis_power_limit);
-//                }
+//									else
+										CAN_cmd_gimbal(gimbal_control.gimbal_yaw_motor.given_current, -gimbal_control.gimbal_pitch_motor.given_current);
             }
 
             vTaskDelay(GIMBAL_CONTROL_TIME);
@@ -284,6 +279,9 @@ static void gimbal_init(gimbal_control_t *init)
 
     // 云台数据更新     
     gimbal_feedback_update(init);
+		
+		//stm32pid初始化
+		 stm32_pid_init_pitch(); 
     
     // yaw轴电机初始化
     init->gimbal_yaw_motor.absolute_angle_set = init->gimbal_yaw_motor.absolute_angle;
@@ -642,6 +640,8 @@ static void gimbal_motor_absolute_angle_control(gimbal_motor_t *gimbal_motor)
     //赋值电流值
     gimbal_motor->given_current = (int16_t)(gimbal_motor->current_set);
 
+//		stm32_step_pitch(gimbal_motor->absolute_angle_set,gimbal_motor->absolute_angle,0);
+//		gimbal_motor->given_current = stm32_Y_pitch.Out1;
 }
 /**
  * @brief          云台控制模式:GIMBAL_MOTOR_ENCONDE，使用编码相对角进行控制
@@ -658,7 +658,8 @@ static void gimbal_motor_relative_angle_control(gimbal_motor_t *gimbal_motor)
     gimbal_motor->current_set = gimbal_motor_second_order_linear_controller_calc(&gimbal_motor->gimbal_motor_second_order_linear_controller, gimbal_motor->relative_angle_set, gimbal_motor->relative_angle, gimbal_motor->gimbal_motor_measure->speed_rpm, gimbal_motor->gimbal_motor_measure->given_current);
     //赋值电流值
     gimbal_motor->given_current = (int16_t)(gimbal_motor->current_set);
-
+//		stm32_step_pitch(gimbal_motor->relative_angle_set,gimbal_motor->relative_angle,0);
+//		gimbal_motor->given_current = stm32_Y_pitch.Out1;
 }
 
 /**

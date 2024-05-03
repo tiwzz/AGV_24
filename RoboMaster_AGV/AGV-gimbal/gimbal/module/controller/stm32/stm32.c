@@ -101,14 +101,14 @@ void stm32_pid_init_pitch(void)  //pitch
 //	stm32_U_pitch.S_D=10;
 //	stm32_U_pitch.S_N=40;
 
-	stm32_U_pitch.P_P=1100;
-	stm32_U_pitch.P_I=1;
-	stm32_U_pitch.P_D=52;
-	stm32_U_pitch.P_N=20;
+	stm32_U_pitch.P_P=800;
+	stm32_U_pitch.P_I=0;
+	stm32_U_pitch.P_D=10;
+	stm32_U_pitch.P_N=5;
 	stm32_U_pitch.S_P=110;
 	stm32_U_pitch.S_I=1;
 	stm32_U_pitch.S_D=3;
-	stm32_U_pitch.S_N=15;
+	stm32_U_pitch.S_N=30;
 }
 void stm32_relative_pid_init_pitch(void)  //pitch
 {
@@ -308,7 +308,6 @@ void stm32_step_pitch_auto(fp32 angle_set,fp32 angle_feedback,fp32 speed_feedbac
 }
 void stm32_step_pitch(fp32 angle_set,fp32 angle_feedback,fp32 speed_feedback)  //pitch
 {   
-   
   stm32_U_pitch.angle_set=angle_set;
   stm32_U_pitch.angle_feedback=angle_feedback;
   stm32_U_pitch.speed_feedback=speed_feedback;

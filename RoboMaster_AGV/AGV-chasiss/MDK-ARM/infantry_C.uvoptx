@@ -180,6 +180,16 @@
           <WinNumber>1</WinNumber>
           <ItemText>get_cap</ItemText>
         </Ww>
+        <Ww>
+          <count>5</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>\\standard_tpye_c\../application/chassis_task.c\chassis_move.motor_chassis[1]</ItemText>
+        </Ww>
+        <Ww>
+          <count>6</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>get_cap</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>
