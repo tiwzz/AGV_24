@@ -296,6 +296,10 @@ typedef struct
 		
 		fp32 rudder_given_current[4];
 		fp32 rudder_speed[4];
+		
+		fp32 pitch_relative_angle;
+		fp32 pitch_absolute_angle;
+		fp32 pitch_angle_error;
 }chassis_move_t;
 
 

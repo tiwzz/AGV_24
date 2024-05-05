@@ -84,9 +84,9 @@ I (..\bsp\boards\bsp_usart.h)(0x6617CEA7)
 I (..\application\remote_control.h)(0x6617CEA7)
 I (..\bsp\boards\bsp_rc.h)(0x6617CEA7)
 I (../Inc/stm32f4xx_it.h)(0x6617CEA7)
-I (..\application\chassis_task.h)(0x6634AD0C)
+I (..\application\chassis_task.h)(0x66376D34)
 I (..\components\controller\pid.h)(0x6617CEA7)
-I (..\application\CAN_Receive.h)(0x6617CEA7)
+I (..\application\CAN_Receive.h)(0x663765E7)
 I (..\components\algorithm\user_lib.h)(0x6618116C)
 I (..\stm32\Inc\stm32.h)(0x6617CEA7)
 I (..\stm32\Inc\STM32_Config.h)(0x6617CEA7)
@@ -201,12 +201,12 @@ I (../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h)(0x6617CEA7)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h)(0x6617CEA7)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h)(0x6617CEA7)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h)(0x6617CEA7)
-I (..\application\chassis_task.h)(0x6634AD0C)
+I (..\application\chassis_task.h)(0x66376D34)
 I (..\application\Remote_Control.h)(0x6617CEA7)
 I (..\application\struct_typedef.h)(0x6617CEA7)
 I (..\bsp\boards\bsp_rc.h)(0x6617CEA7)
 I (..\components\controller\pid.h)(0x6617CEA7)
-I (..\application\CAN_Receive.h)(0x6617CEA7)
+I (..\application\CAN_Receive.h)(0x663765E7)
 I (..\components\algorithm\user_lib.h)(0x6618116C)
 I (..\stm32\Inc\stm32.h)(0x6617CEA7)
 I (..\stm32\Inc\STM32_Config.h)(0x6617CEA7)
@@ -1821,12 +1821,12 @@ I (../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h)(0x6617CEA7
 I (..\bsp\boards\bsp_adc.h)(0x6617CEA7)
 I (..\bsp\boards\bsp_buzzer.h)(0x6617CEA7)
 I (..\bsp\boards\bsp_flash.h)(0x6617CEA7)
-I (..\application\can_receive.h)(0x6617CEA7)
+I (..\application\can_receive.h)(0x663765E7)
 I (..\application\remote_control.h)(0x6617CEA7)
 I (..\bsp\boards\bsp_rc.h)(0x6617CEA7)
 I (..\application\INS_task.h)(0x6617CEA7)
-F (..\application\CAN_receive.c)(0x6617CEA7)(--c99 -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\bsp\boards -I ..\components\devices -I ..\components\algorithm -I ..\components\algorithm\Include -I ..\components\support -I ..\application\protocol -I ..\components\controller -I ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc -I ..\stm32\Inc -I ..\ADRC\Inc -I ..\ADRC2 -I ..\application\Lib_RM_UI -I ..\kalman -I ..\application-I.\RTE\_infantry_C-ID:\keil_pack\ARM\CMSIS\5.8.0\CMSIS\Core\Include-ID:\keil_pack\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\keil_pack\Keil\STM32F4xx_DFP\2.17.1\Device\Include-D__UVISION_VERSION="536" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx -DUSE_HAL_DRIVER -DSTM32F407xx -DARM_MATH_CM4 -D__FPU_USED="1U" -D__FPU_PRESENT="1U" -D__CC_ARM -DARM_MATH_MATRIX_CHECK -DARM_MATH_ROUNDING-o standard_tpye_c\can_receive.o --omf_browse standard_tpye_c\can_receive.crf --depend standard_tpye_c\can_receive.d)
-I (..\application\CAN_receive.h)(0x6617CEA7)
+F (..\application\CAN_receive.c)(0x66376D94)(--c99 -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\bsp\boards -I ..\components\devices -I ..\components\algorithm -I ..\components\algorithm\Include -I ..\components\support -I ..\application\protocol -I ..\components\controller -I ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc -I ..\stm32\Inc -I ..\ADRC\Inc -I ..\ADRC2 -I ..\application\Lib_RM_UI -I ..\kalman -I ..\application-I.\RTE\_infantry_C-ID:\keil_pack\ARM\CMSIS\5.8.0\CMSIS\Core\Include-ID:\keil_pack\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\keil_pack\Keil\STM32F4xx_DFP\2.17.1\Device\Include-D__UVISION_VERSION="536" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx -DUSE_HAL_DRIVER -DSTM32F407xx -DARM_MATH_CM4 -D__FPU_USED="1U" -D__FPU_PRESENT="1U" -D__CC_ARM -DARM_MATH_MATRIX_CHECK -DARM_MATH_ROUNDING-o standard_tpye_c\can_receive.o --omf_browse standard_tpye_c\can_receive.crf --depend standard_tpye_c\can_receive.d)
+I (..\application\CAN_receive.h)(0x663765E7)
 I (..\application\struct_typedef.h)(0x6617CEA7)
 I (../Inc/main.h)(0x6617CEA7)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x6617CEA7)
@@ -1886,7 +1886,7 @@ I (../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h)(0x6617CEA7)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h)(0x6617CEA7)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h)(0x6617CEA7)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h)(0x6617CEA7)
-I (..\application\chassis_task.h)(0x6634AD0C)
+I (..\application\chassis_task.h)(0x66376D34)
 I (..\application\Remote_Control.h)(0x6617CEA7)
 I (..\bsp\boards\bsp_rc.h)(0x6617CEA7)
 I (..\components\controller\pid.h)(0x6617CEA7)
@@ -1943,12 +1943,12 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x6617CEA7)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd.h)(0x6617CEA7)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h)(0x6617CEA7)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h)(0x6617CEA7)
-I (..\application\chassis_task.h)(0x6634AD0C)
+I (..\application\chassis_task.h)(0x66376D34)
 I (..\application\Remote_Control.h)(0x6617CEA7)
 I (..\application\struct_typedef.h)(0x6617CEA7)
 I (..\bsp\boards\bsp_rc.h)(0x6617CEA7)
 I (..\components\controller\pid.h)(0x6617CEA7)
-I (..\application\CAN_Receive.h)(0x6617CEA7)
+I (..\application\CAN_Receive.h)(0x663765E7)
 I (..\components\algorithm\user_lib.h)(0x6618116C)
 I (..\stm32\Inc\stm32.h)(0x6617CEA7)
 I (..\stm32\Inc\STM32_Config.h)(0x6617CEA7)
@@ -1958,8 +1958,8 @@ I (..\stm32\Inc\stm32_types.h)(0x6617CEA7)
 I (..\components\algorithm\Include\arm_math.h)(0x6617CEA7)
 I (D:\keil\ARM\ARMCC\include\string.h)(0x6025237E)
 I (D:\keil\ARM\ARMCC\include\math.h)(0x60252378)
-F (..\application\chassis_task.c)(0x662E3D8D)(--c99 -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\bsp\boards -I ..\components\devices -I ..\components\algorithm -I ..\components\algorithm\Include -I ..\components\support -I ..\application\protocol -I ..\components\controller -I ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc -I ..\stm32\Inc -I ..\ADRC\Inc -I ..\ADRC2 -I ..\application\Lib_RM_UI -I ..\kalman -I ..\application-I.\RTE\_infantry_C-ID:\keil_pack\ARM\CMSIS\5.8.0\CMSIS\Core\Include-ID:\keil_pack\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\keil_pack\Keil\STM32F4xx_DFP\2.17.1\Device\Include-D__UVISION_VERSION="536" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx -DUSE_HAL_DRIVER -DSTM32F407xx -DARM_MATH_CM4 -D__FPU_USED="1U" -D__FPU_PRESENT="1U" -D__CC_ARM -DARM_MATH_MATRIX_CHECK -DARM_MATH_ROUNDING-o standard_tpye_c\chassis_task.o --omf_browse standard_tpye_c\chassis_task.crf --depend standard_tpye_c\chassis_task.d)
-I (..\application\chassis_task.h)(0x6634AD0C)
+F (..\application\chassis_task.c)(0x6637732B)(--c99 -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\bsp\boards -I ..\components\devices -I ..\components\algorithm -I ..\components\algorithm\Include -I ..\components\support -I ..\application\protocol -I ..\components\controller -I ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc -I ..\stm32\Inc -I ..\ADRC\Inc -I ..\ADRC2 -I ..\application\Lib_RM_UI -I ..\kalman -I ..\application-I.\RTE\_infantry_C-ID:\keil_pack\ARM\CMSIS\5.8.0\CMSIS\Core\Include-ID:\keil_pack\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\keil_pack\Keil\STM32F4xx_DFP\2.17.1\Device\Include-D__UVISION_VERSION="536" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx -DUSE_HAL_DRIVER -DSTM32F407xx -DARM_MATH_CM4 -D__FPU_USED="1U" -D__FPU_PRESENT="1U" -D__CC_ARM -DARM_MATH_MATRIX_CHECK -DARM_MATH_ROUNDING-o standard_tpye_c\chassis_task.o --omf_browse standard_tpye_c\chassis_task.crf --depend standard_tpye_c\chassis_task.d)
+I (..\application\chassis_task.h)(0x66376D34)
 I (..\application\Remote_Control.h)(0x6617CEA7)
 I (..\application\struct_typedef.h)(0x6617CEA7)
 I (..\bsp\boards\bsp_rc.h)(0x6617CEA7)
@@ -2008,7 +2008,7 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x6617CEA7)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd.h)(0x6617CEA7)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h)(0x6617CEA7)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h)(0x6617CEA7)
-I (..\application\CAN_Receive.h)(0x6617CEA7)
+I (..\application\CAN_Receive.h)(0x663765E7)
 I (..\components\algorithm\user_lib.h)(0x6618116C)
 I (..\stm32\Inc\stm32.h)(0x6617CEA7)
 I (..\stm32\Inc\STM32_Config.h)(0x6617CEA7)
@@ -2650,11 +2650,11 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x6617CEA7)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd.h)(0x6617CEA7)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h)(0x6617CEA7)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h)(0x6617CEA7)
-I (..\application\chassis_task.h)(0x6634AD0C)
+I (..\application\chassis_task.h)(0x66376D34)
 I (..\application\Remote_Control.h)(0x6617CEA7)
 I (..\application\struct_typedef.h)(0x6617CEA7)
 I (..\bsp\boards\bsp_rc.h)(0x6617CEA7)
-I (..\application\CAN_Receive.h)(0x6617CEA7)
+I (..\application\CAN_Receive.h)(0x663765E7)
 I (..\components\algorithm\user_lib.h)(0x6618116C)
 I (..\stm32\Inc\stm32.h)(0x6617CEA7)
 I (..\stm32\Inc\STM32_Config.h)(0x6617CEA7)
@@ -4346,12 +4346,12 @@ I (..\stm32\Inc\stm32_External_Functions.h)(0x6617CEA7)
 I (..\stm32\Inc\stm32_types.h)(0x6617CEA7)
 I (..\stm32\stm32_private.h)(0x6617CEA7)
 I (..\stm32\rtwtypes.h)(0x6617CEA7)
-I (..\application\chassis_task.h)(0x6634AD0C)
+I (..\application\chassis_task.h)(0x66376D34)
 I (..\application\Remote_Control.h)(0x6617CEA7)
 I (..\application\struct_typedef.h)(0x6617CEA7)
 I (..\bsp\boards\bsp_rc.h)(0x6617CEA7)
 I (..\components\controller\pid.h)(0x6617CEA7)
-I (..\application\CAN_Receive.h)(0x6617CEA7)
+I (..\application\CAN_Receive.h)(0x663765E7)
 I (..\components\algorithm\user_lib.h)(0x6618116C)
 F (..\kalman\kalman.c)(0x6617CEA7)(--c99 -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\bsp\boards -I ..\components\devices -I ..\components\algorithm -I ..\components\algorithm\Include -I ..\components\support -I ..\application\protocol -I ..\components\controller -I ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc -I ..\stm32\Inc -I ..\ADRC\Inc -I ..\ADRC2 -I ..\application\Lib_RM_UI -I ..\kalman -I ..\application-I.\RTE\_infantry_C-ID:\keil_pack\ARM\CMSIS\5.8.0\CMSIS\Core\Include-ID:\keil_pack\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\keil_pack\Keil\STM32F4xx_DFP\2.17.1\Device\Include-D__UVISION_VERSION="536" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx -DUSE_HAL_DRIVER -DSTM32F407xx -DARM_MATH_CM4 -D__FPU_USED="1U" -D__FPU_PRESENT="1U" -D__CC_ARM -DARM_MATH_MATRIX_CHECK -DARM_MATH_ROUNDING-o standard_tpye_c\kalman.o --omf_browse standard_tpye_c\kalman.crf --depend standard_tpye_c\kalman.d)
 I (..\kalman\kalman.h)(0x6617CEA7)

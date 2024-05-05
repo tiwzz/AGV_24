@@ -12,6 +12,10 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
+
+static CAN_TxHeaderTypeDef capid_tx_message;
+static uint8_t capid_can_send_data[8];
+
 /**
  * @brief can通信线程初始化, 主要任务为开辟线程队列
  * 
@@ -63,6 +67,11 @@ static can_comm_data_t shoot_can_comm_data = {
 static can_comm_data_t referee_can_comm_data = {
     .can_handle = &REFEREE_CAN, // 初始化裁判系统通信设备can
     .can_comm_target = CAN_COMM_REFEREE,
+};
+//发送云台pitch轴的相对角和绝对角
+static can_comm_data_t PitchAngle_can_comm_data = {
+    .can_handle = &PitchAngle_CAN, // 初始化裁判系统通信设备can
+    .can_comm_target = CAN_COMM_PITCHANGLE,
 };
 
 bool init_finish = false;
@@ -165,6 +174,38 @@ void can_comm_board(int16_t relative_angle, int16_t chassis_vx, int16_t chassis_
     add_can_comm_queue(&can_comm, &board_can_comm_data);
 }
 
+//void can_comm_pitchangle(int16_t pitch_relative,int32_t pitch_absolute, int32_t key_3, int16_t key_other )
+//{
+//    PitchAngle_can_comm_data.transmit_message.StdId = CAN_PITCHANGLE_ID;
+//    PitchAngle_can_comm_data.transmit_message.IDE = CAN_ID_STD;
+//    PitchAngle_can_comm_data.transmit_message.RTR = CAN_RTR_DATA;
+//    PitchAngle_can_comm_data.transmit_message.DLC = 0x08;
+//    PitchAngle_can_comm_data.data[0] = (pitch_relative >> 8);
+//    PitchAngle_can_comm_data.data[1] = pitch_relative;
+//    PitchAngle_can_comm_data.data[2] = (pitch_absolute >> 8);
+//    PitchAngle_can_comm_data.data[3] = pitch_absolute;
+//    PitchAngle_can_comm_data.data[4] = (key_3 >> 8);
+//    PitchAngle_can_comm_data.data[5] = key_3;
+//    PitchAngle_can_comm_data.data[6] = (key_other >> 8);
+//    PitchAngle_can_comm_data.data[7] = key_other;
+//    //添加数据到通信队列
+//    add_can_comm_queue(&can_comm, &PitchAngle_can_comm_data); 
+//}
+
+void CAN_CMD_cap(int16_t pitch_relative,int16_t pitch_absolute)
+{
+  uint32_t send_mail_box;
+  capid_tx_message.StdId = 0x213;
+  capid_tx_message.IDE = CAN_ID_STD;
+  capid_tx_message.RTR = CAN_RTR_DATA;
+  capid_tx_message.DLC = 0x08;
+  capid_can_send_data[0] = pitch_relative >> 8;
+  capid_can_send_data[1] = pitch_relative;
+  capid_can_send_data[2] = pitch_absolute >> 8;
+  capid_can_send_data[3] = pitch_absolute;
+  HAL_CAN_AddTxMessage(&hcan1, &capid_tx_message, capid_can_send_data, &send_mail_box);
+}
+
 void can_comm_shoot(int16_t fric1, int16_t fric2, int16_t trigger)
 {
     //配置can发送数据
@@ -187,7 +228,7 @@ void can_comm_shoot(int16_t fric1, int16_t fric2, int16_t trigger)
 void can_comm_referee(int16_t key_1,int32_t key_2, int32_t key_3, int16_t key_other )
 {
 	  uint32_t send_mail_box;
-    referee_can_comm_data.transmit_message.StdId = 0x219;
+    referee_can_comm_data.transmit_message.StdId = CAN_REFEREE_ID;
     referee_can_comm_data.transmit_message.IDE = CAN_ID_STD;
     referee_can_comm_data.transmit_message.RTR = CAN_RTR_DATA;
     referee_can_comm_data.transmit_message.DLC = 0x08;
@@ -202,6 +243,7 @@ void can_comm_referee(int16_t key_1,int32_t key_2, int32_t key_3, int16_t key_ot
     //添加数据到通信队列
     add_can_comm_queue(&can_comm, &referee_can_comm_data); 
 }
+
 
 bool can_comm_task_init_finish(void)
 {

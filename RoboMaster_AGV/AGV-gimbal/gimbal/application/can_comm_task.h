@@ -25,6 +25,10 @@
 #define SHOOT_CAN hcan2
 //裁判系统can通信
 #define REFEREE_CAN hcan1
+//发送云台pitch轴的相对角和绝对角can通信
+#define PitchAngle_CAN hcan1
+
+#define CAN_PITCHANGLE_ID  0x213
 typedef enum
 {
     CAN_CHASSIS_ALL_ID = 0x200,
@@ -33,6 +37,7 @@ typedef enum
     CAN_3508_M3_ID = 0x202,
     CAN_3508_M4_ID = 0x201,
     CAN_GIMBAL_CONTROL_CHASSIS_ID = 0x218,
+		CAN_REFEREE_ID = 0x219,
     CAN_YAW_MOTOR_ID = 0x205,
     CAN_PIT_MOTOR_ID = 0x206,
     CAN_TRIGGER_MOTOR_ID = 0x207,
@@ -88,6 +93,10 @@ void can_comm_board(int16_t relative_angle, int16_t chassis_vx, int16_t chassis_
 void can_comm_shoot(int16_t fric1, int16_t fric2, int16_t trigger);
 
 void can_comm_referee(int16_t key_1,int32_t key_2, int32_t key_3, int16_t key_other );
+
+//void can_comm_pitchangle(int16_t pitch_relative,int32_t pitch_absolute, int32_t key_3, int16_t key_other );
+
+void CAN_CMD_cap(int16_t pitch_relative,int16_t pitch_absolute);
 
 bool can_comm_task_init_finish(void);
 

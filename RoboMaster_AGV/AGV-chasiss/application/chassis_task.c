@@ -186,8 +186,7 @@ void chassis_task(void const *pvParameters)
 		chassis_set_contorl(&chassis_move);
 		rudder_control_loop(&chassis_move);
 		RUDDER_POWER_CONTROL(&chassis_move);
-		CHASSIC_MOTOR_PID_CONTROL(&chassis_move);
-
+		CHASSIC_MOTOR_PID_CONTROL(&chassis_move);	
 		linkState_1++;		linkState_2++;
 		
 		if (toe_is_error(0)) // 若双板通信没接收到数据，则舵和轮都不动
@@ -296,6 +295,9 @@ static void chassis_feedback_update(chassis_move_t *chassis_move_update)
 
 	// 云台的相对角度
 	chassis_move.gimbal_data.relative_angle = ((fp32)(chassis_move.gimbal_data.relative_angle_receive)) * Motor_Ecd_to_Rad;
+	
+	//云台的相对角和绝对角之差
+	chassis_move.pitch_angle_error = fabs(chassis_move.pitch_relative_angle - chassis_move.pitch_absolute_angle);
 }
 
 /**
@@ -866,25 +868,28 @@ void CHASSIC_MOTOR_POWER_CONTROL(chassis_move_t *chassis_motor)
 		chassis_motor->power_control.forecast_total_power += chassis_motor->power_control.forecast_motor_power[i];
 	}
 	
-//	if (chassis_motor->power_control.forecast_total_power > chassis_motor->power_control.POWER_MAX) // 超功率模型衰减
-//	{
-//	power_scale = chassis_motor->power_control.POWER_MAX / chassis_motor->power_control.forecast_total_power;
-//	}
-	//前后轮功率分配
-//	scaled_motor_power[0] = chassis_motor->power_control.forecast_total_power / 10 * 1.3f * power_scale; 
-//	scaled_motor_power[1] = chassis_motor->power_control.forecast_total_power / 10 * 1.7f * power_scale; 
-//	scaled_motor_power[2] = chassis_motor->power_control.forecast_total_power / 10 * 3.5f * power_scale; 
-//	scaled_motor_power[3] = chassis_motor->power_control.forecast_total_power / 10 * 3.5f * power_scale; 
-	
 	if (chassis_motor->power_control.forecast_total_power > chassis_motor->power_control.POWER_MAX) // 超功率模型衰减
 	{
 		fp32 power_scale = chassis_motor->power_control.POWER_MAX / chassis_motor->power_control.forecast_total_power;
-		for (uint8_t i = 0; i < 4; i++)
+		if (chassis_motor->pitch_angle_error > 20)//爬坡模式
 		{
-			scaled_motor_power[i] = chassis_motor->power_control.forecast_motor_power[i] * power_scale; // 获得衰减后的功率
-		
-			if (scaled_motor_power[i] < 0)		continue;
-
+			scaled_motor_power[0] = chassis_motor->power_control.forecast_total_power / 10 * 2.0f * power_scale; 
+			scaled_motor_power[1] = chassis_motor->power_control.forecast_total_power / 10 * 2.0f * power_scale; 
+			scaled_motor_power[2] = chassis_motor->power_control.forecast_total_power / 10 * 4.0f * power_scale; 
+			scaled_motor_power[3] = chassis_motor->power_control.forecast_total_power / 10 * 4.0f * power_scale; 
+		}
+		else
+		{
+			for (uint8_t i = 0; i < 4; i++)
+			{
+				scaled_motor_power[i] = chassis_motor->power_control.forecast_motor_power[i] * power_scale; // 获得衰减后的功率
+			
+				if (scaled_motor_power[i] < 0)		continue;
+			}
+		}
+	
+		for (uint8_t i = 0; i < 4; i++)
+		{	
 			fp32 b = toque_coefficient * chassis_motor->motor_chassis[i].chassis_motor_measure->speed_rpm;
 			fp32 c = k1 * chassis_motor->motor_chassis[i].chassis_motor_measure->speed_rpm * chassis_motor->motor_chassis[i].chassis_motor_measure->speed_rpm - scaled_motor_power[i] + constant_3508;
 

@@ -32,7 +32,7 @@
 #define CAN_FEEDBACK_FREAM_ID_A       0x222
 #define CAN_FEEDBACK_FREAM_ID_B       0x223
 #define CAN_CTRL_FREAM_ID             0x224       //CANÖ¡IDºÅ
-
+#define CAN_PITCHANGLE_ID  0x213
 typedef enum
 {
     BATTERY = 1,
@@ -90,8 +90,7 @@ typedef enum
 	  CAN_CAPID=0x211,
 	  CAN_POWERID=0x212,
 	  CAN_GIMBAL_CALL_BACK_ID=0x218,
-		CAN_GIMBAL_CALL_BACK_KEY_ID=0x219,
-	  CAN_REFEREE_ID = 0x220,
+		CAN_REFEREE_ID=0x219,
 } can_msg_id_e;
 
 

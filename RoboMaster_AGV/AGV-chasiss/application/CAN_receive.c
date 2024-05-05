@@ -88,7 +88,15 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
       linkState_1 = 0;
       break;
     }
-    case CAN_GIMBAL_CALL_BACK_KEY_ID:
+    case CAN_PITCHANGLE_ID: // pitch轴的相对角和绝对角
+    {
+			chassis_move.pitch_relative_angle = ((fp32)(((int16_t)rx_data[0] << 8 )|(int16_t)(rx_data[1])));
+			chassis_move.pitch_absolute_angle = ((fp32)(((int16_t)rx_data[2] << 8 )|(int16_t)(rx_data[3])));
+			if(chassis_move.pitch_relative_angle > 30000) chassis_move.pitch_relative_angle = chassis_move.pitch_relative_angle - 65535;
+			if(chassis_move.pitch_absolute_angle > 30000) chassis_move.pitch_absolute_angle = chassis_move.pitch_absolute_angle - 65535;
+      break;
+    }
+    case CAN_REFEREE_ID:
     {
       chassis_move.chassis_power = ((fp32)(((int16_t)rx_data[0] << 8 )|(int16_t)(rx_data[1])))/100;        // 机器人当前功率
       chassis_move.chassis_power_buffer = ((int16_t)(rx_data[2] << 8 | rx_data[3]));       // 机器人功率buff
