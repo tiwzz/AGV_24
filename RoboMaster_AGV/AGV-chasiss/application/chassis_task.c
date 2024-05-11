@@ -252,8 +252,8 @@ static void chassis_init(chassis_move_t *chassis_move_init)
 	 ramp_init(&chassis_move_init->vx_ramp, 0.030f, 20, -20);
    ramp_init(&chassis_move_init->vy_ramp, 0.030f, 10, -10);
 	
-	 ramp_init_2(&chassis_move_init->vx_ramp_2, 0.12f, 0.12f);//0.06
-   ramp_init_2(&chassis_move_init->vy_ramp_2, 0.12f, 0.12f);
+	 ramp_init_2(&chassis_move_init->vx_ramp_2, 0.06f, 0.06f);//0.06
+   ramp_init_2(&chassis_move_init->vy_ramp_2, 0.06f, 0.06f);
 	// 轮电机转动方向初始化
 	chassis_move_init->Forward_L.Judge_Speed_Direction = chassis_move_init->Forward_R.Judge_Speed_Direction =
 		chassis_move_init->Back_L.Judge_Speed_Direction = chassis_move_init->Back_R.Judge_Speed_Direction = 1.0f;
@@ -413,7 +413,8 @@ static void chassis_set_contorl(chassis_move_t *chassis_move_control)
 	{
 		fp32 sin_yaw, cos_yaw = 0.0f;
 		fp32 relative_angle = 0.0f;
-		chassis_move_control->chassis_relative_angle_set = rad_format(0.0f);
+		if (chassis_move_control->key_C == CAP_OUTPUT_to_CHASSIS_FLY)  chassis_move_control->chassis_relative_angle_set = rad_format(-0.75f);
+		else chassis_move_control->chassis_relative_angle_set = rad_format(0.0f);
 		relative_angle = chassis_move_control->gimbal_data.relative_angle;
 		if (relative_angle > PI)
 			relative_angle = -2 * PI + relative_angle;
@@ -707,7 +708,7 @@ static void Rudder_motor_relative_angle_control(Rudder_Motor_t *chassis_motor)
 	}
 	else
 	{
-		chassis_motor->ecd_set=chassis_motor->gimbal_motor_measure->ecd;
+		chassis_motor->ecd_set = chassis_motor->gimbal_motor_measure->ecd;
 	}
 
 	chassis_motor->ecd_error = chassis_motor->ecd_set - chassis_motor->gimbal_motor_measure->ecd;
@@ -829,15 +830,11 @@ void CHASSIC_MOTOR_POWER_CONTROL(chassis_move_t *chassis_motor)
 	CAN_CMD_cap(chassis_motor->power_control.power_charge); // 设置超电的充电功率
 //CAN_CMD_cap(0); // 设置超电的充电功率
 
-	//双板通信超电电压
-	CAN_cmd_gimbal(get_cap.capvot, 0);
-
-
 	if (get_cap.capvot > 15) // 当超电电压大于某个值(防止C620掉电)//手册极限为12V
 	{
 		if (chassis_move.key_C == CAP_OUTPUT_to_CHASSIS_FLY)   //主动超电，用于上坡，平地加速
 		{
-			chassis_motor->power_control.POWER_MAX = 250;		
+			chassis_motor->power_control.POWER_MAX = 275;		
 		}
 		else if (chassis_move.key_C == CAP_OUTPUT_to_CHASSIS)//主动超电，用于飞坡
 		{
@@ -855,6 +852,8 @@ void CHASSIC_MOTOR_POWER_CONTROL(chassis_move_t *chassis_motor)
 	{
 		chassis_motor->power_control.POWER_MAX = max_power_limit-10 ;
 	}
+	
+	CAN_cmd_gimbal(get_cap.capvot, (int32_t)chassis_motor->power_control.POWER_MAX);
 
 	for (uint8_t i = 0; i < 4; i++) // 获得所有3508电机的功率和总功率
 	{
@@ -871,12 +870,19 @@ void CHASSIC_MOTOR_POWER_CONTROL(chassis_move_t *chassis_motor)
 	if (chassis_motor->power_control.forecast_total_power > chassis_motor->power_control.POWER_MAX) // 超功率模型衰减
 	{
 		fp32 power_scale = chassis_motor->power_control.POWER_MAX / chassis_motor->power_control.forecast_total_power;
-		if (chassis_motor->pitch_angle_error > 20)//爬坡模式
+		if (chassis_motor->pitch_angle_error > 20 && chassis_move.key_C == CAP_OUTPUT_to_CHASSIS_FLY)//爬坡模式
 		{
-			scaled_motor_power[0] = chassis_motor->power_control.forecast_total_power / 10 * 2.0f * power_scale; 
-			scaled_motor_power[1] = chassis_motor->power_control.forecast_total_power / 10 * 2.0f * power_scale; 
-			scaled_motor_power[2] = chassis_motor->power_control.forecast_total_power / 10 * 4.0f * power_scale; 
-			scaled_motor_power[3] = chassis_motor->power_control.forecast_total_power / 10 * 4.0f * power_scale; 
+			scaled_motor_power[0] = chassis_motor->power_control.forecast_total_power / 10 * 1.0f * power_scale; 
+			scaled_motor_power[1] = chassis_motor->power_control.forecast_total_power / 10 * 3.0f * power_scale; 
+			scaled_motor_power[2] = chassis_motor->power_control.forecast_total_power / 10 * 3.0f * power_scale; 
+			scaled_motor_power[3] = chassis_motor->power_control.forecast_total_power / 10 * 3.0f * power_scale; 
+		}
+		else if(chassis_motor->pitch_angle_error > 20)
+		{
+			scaled_motor_power[0] = chassis_motor->power_control.forecast_total_power / 10 * 1.5f * power_scale; 
+			scaled_motor_power[1] = chassis_motor->power_control.forecast_total_power / 10 * 1.5f * power_scale; 
+			scaled_motor_power[2] = chassis_motor->power_control.forecast_total_power / 10 * 3.5f * power_scale; 
+			scaled_motor_power[3] = chassis_motor->power_control.forecast_total_power / 10 * 3.5f * power_scale; 
 		}
 		else
 		{

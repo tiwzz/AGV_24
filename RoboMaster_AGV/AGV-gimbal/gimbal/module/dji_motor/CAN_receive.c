@@ -91,7 +91,8 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
     }
     case cap_voltage_ID:
     {
-      Cap_Voltage =(((int32_t)(rx_data[0]) << 8) | (int32_t)(rx_data[1]));   // 输入电压
+      Cap_Voltage =(((int32_t)(rx_data[0]) << 8) | (int32_t)(rx_data[1]));   //超电输入电压
+			cur_output = (((int32_t)(rx_data[2]) << 8) | (int32_t)(rx_data[3]));   //
     }
     default:
     {

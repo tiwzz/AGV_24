@@ -24,6 +24,7 @@ chassis_behaviour_e last_chassis_behaviour;
 Graph_Data Aim[10];
 String_Data strSHOOT, strCAP, strPILL, strMODE, strCOVER;
 extern int32_t Cap_Voltage;
+int32_t cur_output;
 fp32 v = 0;
 void UI_task(void const *pvParameters)
 {
@@ -40,7 +41,7 @@ void UI_task(void const *pvParameters)
 		memset(&Aim[k], 0, sizeof(Aim[k]));
 	} // 清空图形数据
 	Line_Draw(&Aim[7],"AL8",UI_Graph_ADD,7,UI_Color_Purplish_red,10,1700,600,1700+100*sin(-gimbal_control.gimbal_yaw_motor.relative_angle),600+100*cos(-gimbal_control.gimbal_yaw_motor.relative_angle));
-	Circle_Draw(&Aim[9],"CL9",UI_Graph_ADD,5,UI_Color_Orange,5,1700,600,100);
+//	Circle_Draw(&Aim[9],"CL9",UI_Graph_ADD,5,UI_Color_Orange,5,1700,600,120);
 	vTaskDelay(25);
 	
 	Char_Draw(&strCAP, "CAP", UI_Graph_ADD, 8, UI_Color_Green, 20, strlen(tmp1), 2, 860, 200, tmp1);
@@ -69,11 +70,10 @@ void UI_task(void const *pvParameters)
 
 		if ((last_pill < pill) && (last_pill != pill))
 		{
-			sum_pill += pill;
+			sum_pill += (pill - last_pill);
 		}
 
 		Line_Draw(&Aim[7],"AL8",UI_Graph_Change,7,UI_Color_Purplish_red,10,1700,600,1700+100*sin(-gimbal_control.gimbal_yaw_motor.relative_angle),600+100*cos(-gimbal_control.gimbal_yaw_motor.relative_angle));
-//		Line_Draw(&Aim[7],"AL8",UI_Graph_Change,7,UI_Color_Purplish_red,10,1700,600,1700,600+100);
 		UI_ReFresh(1, Aim[7]);
 		vTaskDelay(25);
 		
@@ -100,7 +100,7 @@ void UI_task(void const *pvParameters)
 		}
 		
 		// 超电电容组电压反馈
-		sprintf(tmp1, "cap:%d(V)", Cap_Voltage);
+		sprintf(tmp1, "CAP:  %dV\nCUR_P:%d", Cap_Voltage,cur_output);
 		if (Cap_Voltage > 16)
 			Char_Draw(&strCAP, "CAP", UI_Graph_Change, 8, UI_Color_Green, 20, strlen(tmp1), 2, 860, 200, tmp1);
 		else

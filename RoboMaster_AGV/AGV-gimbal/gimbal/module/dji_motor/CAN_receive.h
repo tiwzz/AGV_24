@@ -25,6 +25,8 @@
 #include "can_comm_task.h"
 
 #define CHASSIS_CAN hcan1
+
+extern int32_t cur_output;
 // #define GIMBAL_CAN hcan1
 
 // /* CAN send and receive ID */

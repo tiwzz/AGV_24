@@ -21,7 +21,7 @@
 #include "remote_control.h"
 
 //允许发弹角度误差 rad
-#define ALLOW_ATTACK_ERROR 0.038f//0.04f
+#define ALLOW_ATTACK_ERROR 0.036f//0.04f
 //允许发弹距离 m 
 #define ALLOW_ATTACK_DISTANCE 20.0f
 //允许发弹概率
@@ -63,7 +63,7 @@
 //最大迭代次数
 #define MAX_ITERATE_COUNT 20
 //视觉计算时间
-#define VISION_CALC_TIME 0.003f
+#define VISION_CALC_TIME 0.002f//0.003f
 
 //比例补偿器比例系数
 #define ITERATE_SCALE_FACTOR 0.3f

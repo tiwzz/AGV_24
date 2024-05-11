@@ -75,6 +75,12 @@
 #define Back_L_ecd 2740	   // 左后轮  3号
 #define Back_R_ecd 7574	   // 右后轮  4号
 
+//舵电机的编码值零点
+//#define Forward_L_ecd 5759  // 左前轮  1号
+//#define Forward_R_ecd 7875 // 右前轮  2号
+//#define Back_L_ecd 7727	   // 左后轮  3号
+//#define Back_R_ecd 4220	   // 右后轮  4号
+
 //底盘电机速度环PID
 #define CHASSIS_KP 3000.f  //2000
 #define CHASSIS_KI 0.0f //0
