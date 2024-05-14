@@ -58,7 +58,7 @@
 #endif
 
 //底盘电机最大速度
-#define MAX_WHEEL_SPEED 10.0f
+#define MAX_WHEEL_SPEED 15.0f
 
 //功率控制相关参数
 #define toque_coefficient 1.99688994e-6f // (20/16384)*(0.3)*(187/3591)/9.55  此参数将电机电流转换为扭矩

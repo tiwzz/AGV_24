@@ -16,6 +16,7 @@
 #include "detect_task.h"
 extern cap_measure_t get_cap;
 
+int flag;
 #define pi 3.1415926
 #define half_pi 1.5707963
 
@@ -252,8 +253,8 @@ static void chassis_init(chassis_move_t *chassis_move_init)
 	 ramp_init(&chassis_move_init->vx_ramp, 0.030f, 20, -20);
    ramp_init(&chassis_move_init->vy_ramp, 0.030f, 10, -10);
 	
-	 ramp_init_2(&chassis_move_init->vx_ramp_2, 0.06f, 0.06f);//0.06
-   ramp_init_2(&chassis_move_init->vy_ramp_2, 0.06f, 0.06f);
+	 ramp_init_2(&chassis_move_init->vx_ramp_2, 0.10f, 0.10f);//0.06
+   ramp_init_2(&chassis_move_init->vy_ramp_2, 0.10f, 0.10f);
 	// 轮电机转动方向初始化
 	chassis_move_init->Forward_L.Judge_Speed_Direction = chassis_move_init->Forward_R.Judge_Speed_Direction =
 		chassis_move_init->Back_L.Judge_Speed_Direction = chassis_move_init->Back_R.Judge_Speed_Direction = 1.0f;
@@ -407,14 +408,17 @@ static void chassis_set_contorl(chassis_move_t *chassis_move_control)
 	}
 	fp32 vx_set = 0.0f, vy_set = 0.0f, angle_set = 0.0f;
 	fp32 relative_angle = 0.0f;
+	static uint8_t last_chassis_mode;
 	chassis_behaviour_control_set(&vx_set, &vy_set, &angle_set, chassis_move_control);
 
 	if (chassis_move_control->chassis_motor_mode == CHASSIS_VECTOR_FOLLOW_GIMBAL_YAW) // 底盘跟随云台模式
 	{
 		fp32 sin_yaw, cos_yaw = 0.0f;
 		fp32 relative_angle = 0.0f;
+		
 		if (chassis_move_control->key_C == CAP_OUTPUT_to_CHASSIS_FLY)  chassis_move_control->chassis_relative_angle_set = rad_format(-0.75f);
 		else chassis_move_control->chassis_relative_angle_set = rad_format(0.0f);
+		
 		relative_angle = chassis_move_control->gimbal_data.relative_angle;
 		if (relative_angle > PI)
 			relative_angle = -2 * PI + relative_angle;
@@ -425,7 +429,18 @@ static void chassis_set_contorl(chassis_move_t *chassis_move_control)
 		chassis_move_control->vx_set = cos_yaw * vx_set + sin_yaw * vy_set;
 		chassis_move_control->vy_set = -1.0f * sin_yaw * vx_set + cos_yaw * vy_set;
 
+		if (fabs(relative_angle) < 0.10 && (chassis_move_control->vx_set_CANsend == 0.0f && chassis_move_control->vy_set_CANsend == 0.0f)) // 一般情况下不抱圆，起步速度更快
+		{
+			chassis_move_control->wz_set = 0;
+			if (chassis_move_control->key_C == CAP_OUTPUT_to_CHASSIS_FLY)
+			{
+				chassis_move_control->wz_set = -PID_Calc(&chassis_move_control->chassis_angle_pid, relative_angle, chassis_move_control->chassis_relative_angle_set);
+			}
+		}
+		else
+		{
 		chassis_move_control->wz_set = -PID_Calc(&chassis_move_control->chassis_angle_pid, relative_angle, chassis_move_control->chassis_relative_angle_set);
+		}
 	}
 	
 	
@@ -451,6 +466,7 @@ static void chassis_set_contorl(chassis_move_t *chassis_move_control)
 	else if (chassis_move_control->chassis_motor_mode == CHASSIS_VECTOR_SPIN) // 小陀螺模式
 	{
 		fp32 sin_yaw = 0.0f, cos_yaw = 0.0f;
+		static fp32 temp_wz = 5.0f;
 		relative_angle = chassis_move_control->gimbal_data.relative_angle;
 
 		if (relative_angle > PI)
@@ -470,19 +486,26 @@ static void chassis_set_contorl(chassis_move_t *chassis_move_control)
 		chassis_move_control->vx_set = cos_yaw * vx_set + sin_yaw * vy_set;
 		chassis_move_control->vy_set = -1.0f * sin_yaw * vx_set + cos_yaw * vy_set;
 		chassis_move_control->chassis_relative_angle_set = rad_format(0.0);
+			
+		if(last_chassis_mode != CHASSIS_VECTOR_SPIN)
+		{
+			temp_wz = -temp_wz;
+		}
+		chassis_move_control->wz_set = temp_wz;
 		
-		chassis_move_control->wz_set = 5.0f;
-
 		if (fabs(chassis_move_control->vx_set_CANsend) > 50 || fabs(chassis_move_control->vy_set_CANsend) > 50)
 		{
 			chassis_move_control->wz_set *= 1.2f;
 			chassis_move_control->vx_set *= 1.0f;
 			chassis_move_control->vy_set *= 1.0f;
+			flag = 1;
 		}
 		else // 当原地时，加大转速
 		{
-			chassis_move_control->wz_set *= 2.0f;
+			chassis_move_control->wz_set *= 3.0f;
+			flag = 2;
 		}
+		
 	}
 	else if (chassis_move_control->chassis_motor_mode == CHASSIS_VECTOR_NO_FOLLOW_YAW)
 	{
@@ -497,6 +520,8 @@ static void chassis_set_contorl(chassis_move_t *chassis_move_control)
 		chassis_move_control->wz_set = angle_set;
 	}
 
+	last_chassis_mode = chassis_move_control->chassis_motor_mode;
+	
 	chassic_rudder_preliminary_A_S_solution(chassis_move_control);
 }
 
@@ -828,6 +853,7 @@ void CHASSIC_MOTOR_POWER_CONTROL(chassis_move_t *chassis_motor)
 	
 	
 	CAN_CMD_cap(chassis_motor->power_control.power_charge); // 设置超电的充电功率
+//	CAN_CMD_cap(60*100); // 设置超电的充电功率
 //CAN_CMD_cap(0); // 设置超电的充电功率
 
 	if (get_cap.capvot > 15) // 当超电电压大于某个值(防止C620掉电)//手册极限为12V
@@ -836,9 +862,16 @@ void CHASSIC_MOTOR_POWER_CONTROL(chassis_move_t *chassis_motor)
 		{
 			chassis_motor->power_control.POWER_MAX = 275;		
 		}
-		else if (chassis_move.key_C == CAP_OUTPUT_to_CHASSIS)//主动超电，用于飞坡
+		else if (chassis_move.key_C == CAP_OUTPUT_to_CHASSIS)//正常使用
 		{
-			chassis_motor->power_control.POWER_MAX = 120;	
+			if(chassis_motor->chassis_power_MAX > 59 && chassis_motor->chassis_power_MAX < 71)//功率优先  1~3级
+			chassis_motor->power_control.POWER_MAX = 90;	
+			else if(chassis_motor->chassis_power_MAX > 74 && chassis_motor->chassis_power_MAX < 86)//功率优先  4~6级
+			chassis_motor->power_control.POWER_MAX = 110;	
+			else if(chassis_motor->chassis_power_MAX > 89 && chassis_motor->chassis_power_MAX < 101)//功率优先  7~10级
+			chassis_motor->power_control.POWER_MAX = 130;		
+			else 
+				chassis_motor->power_control.POWER_MAX = 100;	
 		}
 		else
 		{	

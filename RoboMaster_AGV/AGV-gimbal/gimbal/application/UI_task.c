@@ -100,7 +100,7 @@ void UI_task(void const *pvParameters)
 		}
 		
 		// 超电电容组电压反馈
-		sprintf(tmp1, "CAP:  %dV\nCUR_P:%d", Cap_Voltage,cur_output);
+		sprintf(tmp1, "CAP:  %d V(%d W)", Cap_Voltage,cur_output);
 		if (Cap_Voltage > 16)
 			Char_Draw(&strCAP, "CAP", UI_Graph_Change, 8, UI_Color_Green, 20, strlen(tmp1), 2, 860, 200, tmp1);
 		else

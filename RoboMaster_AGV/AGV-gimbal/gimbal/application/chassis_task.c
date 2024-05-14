@@ -225,7 +225,7 @@ static void chassis_set_mode(chassis_move_t *chassis_move_mode)
             }
             else
             {
-                chassis_move_mode->chassis_behaviour = CHASSIS_RUDDER_FOLLOW_GIMBAL_YAW;
+                chassis_move_mode->chassis_behaviour = CHASSIS_FOLLOW_GIMBAL_YAW;
             }
 
             // 按shift超电加速

@@ -16,6 +16,9 @@
 static CAN_TxHeaderTypeDef capid_tx_message;
 static uint8_t capid_can_send_data[8];
 
+static CAN_TxHeaderTypeDef board_can_tx_message;
+static uint8_t board_can_send_data[8];
+
 /**
  * @brief can通信线程初始化, 主要任务为开辟线程队列
  * 
@@ -154,6 +157,25 @@ void can_comm_gimbal(int16_t yaw, int16_t pitch)
     //添加数据到通信队列
     add_can_comm_queue(&can_comm, &gimbal_can_comm_data);
 }
+
+//void can_comm_board(int16_t relative_angle, int16_t chassis_vx, int16_t chassis_vy, int16_t chassis_behaviour)
+//{
+//  uint32_t send_mail_box;
+//  board_can_tx_message.StdId = CAN_GIMBAL_CONTROL_CHASSIS_ID;
+//  board_can_tx_message.IDE = CAN_ID_STD;
+//  board_can_tx_message.RTR = CAN_RTR_DATA;
+//  board_can_tx_message.DLC = 0x08;
+//  board_can_send_data[0] = relative_angle >> 8;
+//  board_can_send_data[1] = relative_angle;
+//  board_can_send_data[2] = chassis_vx >> 8;
+//  board_can_send_data[3] = chassis_vx;
+//  board_can_send_data[4] = chassis_vy >> 8;
+//  board_can_send_data[5] = chassis_vy;
+//  board_can_send_data[6] = chassis_behaviour >> 8;
+//  board_can_send_data[7] = chassis_behaviour;
+//  HAL_CAN_AddTxMessage(&hcan1, &board_can_tx_message, board_can_send_data, &send_mail_box);
+//}
+
 
 void can_comm_board(int16_t relative_angle, int16_t chassis_vx, int16_t chassis_vy, int16_t chassis_behaviour)
 {
