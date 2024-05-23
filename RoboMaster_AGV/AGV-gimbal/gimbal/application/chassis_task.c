@@ -104,9 +104,7 @@ void chassis_task(void const *pvParameters)
                 can_comm_board(chassis_move.chassis_relative_ecd, chassis_move.vx_set, chassis_move.vy_set, chassis_move.chassis_behaviour);
                 can_comm_referee((int16_t)(power_heat_data_t.chassis_power * 100), power_heat_data_t.chassis_power_buffer,
                                  gimbal_control.CAP_Output, robot_state.chassis_power_limit);
-//								can_comm_pitchangle((int16_t)(gimbal_control.gimbal_pitch_motor.relative_angle*100),(int16_t)(gimbal_control.gimbal_pitch_motor.absolute_angle*100),0,0);
-//								can_comm_pitchangle(121,555,0,0);
-								CAN_CMD_cap((int16_t)(gimbal_control.gimbal_pitch_motor.relative_angle*100),(int16_t)(gimbal_control.gimbal_pitch_motor.absolute_angle*100));
+								CAN_CMD_cap((int16_t)(gimbal_control.gimbal_pitch_motor.relative_angle*100),(int16_t)(gimbal_control.gimbal_pitch_motor.absolute_angle*100),(int16_t)chassis_move.chassis_RC->key.v & KEY_PRESSED_OFFSET_CTRL);
 						}
             // œµÕ≥—” ±
             vTaskDelay(CHASSIS_CONTROL_TIME_MS);

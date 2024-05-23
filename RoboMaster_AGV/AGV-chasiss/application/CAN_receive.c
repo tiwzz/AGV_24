@@ -20,7 +20,7 @@ extern int linkState_2;
 extern CAN_HandleTypeDef hcan1;
 extern CAN_HandleTypeDef hcan2;
 extern chassis_move_t chassis_move;
-
+extern int16_t key_ctrl;
 can_feedback_a_typedef get_capA;
 can_feedback_b_typedef get_capB;
 can_control_typedef cap_data = {0};
@@ -92,6 +92,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
     {
 			chassis_move.pitch_relative_angle = ((fp32)(((int16_t)rx_data[0] << 8 )|(int16_t)(rx_data[1])));
 			chassis_move.pitch_absolute_angle = ((fp32)(((int16_t)rx_data[2] << 8 )|(int16_t)(rx_data[3])));
+			key_ctrl = (int16_t)(rx_data[4] << 8 | rx_data[5]);
 			if(chassis_move.pitch_relative_angle > 30000) chassis_move.pitch_relative_angle = chassis_move.pitch_relative_angle - 65535;
 			if(chassis_move.pitch_absolute_angle > 30000) chassis_move.pitch_absolute_angle = chassis_move.pitch_absolute_angle - 65535;
       break;

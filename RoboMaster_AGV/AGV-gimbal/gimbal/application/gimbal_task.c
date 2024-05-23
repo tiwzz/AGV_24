@@ -205,9 +205,9 @@ void gimbal_task(void const *pvParameters)
                     CAN_cmd_gimbal(0, 0);
                 else
                 {
-//									if(gimbal_control.gimbal_rc_ctrl->rc.s[1] == 2)
-//										CAN_cmd_gimbal(0, 0);
-//									else
+									if(gimbal_control.gimbal_rc_ctrl->rc.s[1] == 2)
+										CAN_cmd_gimbal(0, 0);
+									else
 										CAN_cmd_gimbal(gimbal_control.gimbal_yaw_motor.given_current, -gimbal_control.gimbal_pitch_motor.given_current);
             }
 

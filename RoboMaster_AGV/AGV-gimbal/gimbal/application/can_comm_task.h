@@ -96,7 +96,7 @@ void can_comm_referee(int16_t key_1,int32_t key_2, int32_t key_3, int16_t key_ot
 
 //void can_comm_pitchangle(int16_t pitch_relative,int32_t pitch_absolute, int32_t key_3, int16_t key_other );
 
-void CAN_CMD_cap(int16_t pitch_relative,int16_t pitch_absolute);
+void CAN_CMD_cap(int16_t pitch_relative,int16_t pitch_absolute,int16_t kay_ctrl);
 
 bool can_comm_task_init_finish(void);
 

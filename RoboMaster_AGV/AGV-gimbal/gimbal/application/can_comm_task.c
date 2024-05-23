@@ -214,7 +214,7 @@ void can_comm_board(int16_t relative_angle, int16_t chassis_vx, int16_t chassis_
 //    add_can_comm_queue(&can_comm, &PitchAngle_can_comm_data); 
 //}
 
-void CAN_CMD_cap(int16_t pitch_relative,int16_t pitch_absolute)
+void CAN_CMD_cap(int16_t pitch_relative,int16_t pitch_absolute,int16_t kay_ctrl)
 {
   uint32_t send_mail_box;
   capid_tx_message.StdId = 0x213;
@@ -225,6 +225,8 @@ void CAN_CMD_cap(int16_t pitch_relative,int16_t pitch_absolute)
   capid_can_send_data[1] = pitch_relative;
   capid_can_send_data[2] = pitch_absolute >> 8;
   capid_can_send_data[3] = pitch_absolute;
+  capid_can_send_data[2] = kay_ctrl >> 8;
+  capid_can_send_data[3] = kay_ctrl;
   HAL_CAN_AddTxMessage(&hcan1, &capid_tx_message, capid_can_send_data, &send_mail_box);
 }
 

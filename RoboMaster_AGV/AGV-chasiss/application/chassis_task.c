@@ -100,6 +100,7 @@ int flag;
 
 // 底盘控制所有相关数据
 chassis_move_t chassis_move;
+int16_t key_ctrl;
 fp32 kx = 1.f, ky = 1.f, kw = 1.f; // 速度转换的几个系数
 int linkState_2 = 0;
 int linkState_1 = 0; // 判断双板通信是否正常
@@ -165,7 +166,7 @@ void chassis_power_move_control(chassis_move_t *chassis_motor);
 // 超级电容充电
 void Power_Charge(fp32 power);
 //小陀螺角度补偿
-static fp32 chassis_AngleCompensation(int16_t chassis_power_MAX,fp32 Relative_angle);
+static fp32 chassis_AngleCompensation(int16_t chassis_power_MAX,fp32 Relative_angle,fp32 wz);
 #if INCLUDE_uxTaskGetStackHighWaterMark
 uint32_t chassis_high_water;
 #endif
@@ -372,25 +373,44 @@ static void chassis_mode_change_control_transit(chassis_move_t *chassis_move_tra
 }
 
 //小陀螺角度补偿
-static fp32 chassis_AngleCompensation(int16_t chassis_power_MAX,fp32 Relative_angle)
+static fp32 chassis_AngleCompensation(int16_t chassis_power_MAX,fp32 Relative_angle,fp32 wz)
 {
 	fp32 relative_angle = Relative_angle;
 	// 角度补偿
-	if (chassis_power_MAX == 120)
-		relative_angle += Power_120_AngleCompensation;
-	else if (chassis_power_MAX == 100)
-		relative_angle += Power_100_AngleCompensation;
-	else if (chassis_power_MAX == 80)
-		relative_angle += Power_80_AngleCompensation;
-	else if (chassis_power_MAX == 70)
-		relative_angle += Power_70_AngleCompensation;
-	else if (chassis_power_MAX == 60)
-		relative_angle += Power_60_AngleCompensation;
-	else if (chassis_power_MAX == 50)
-		relative_angle += Power_50_AngleCompensation;
+	if(wz > 0)
+	{
+		if (chassis_power_MAX == 120)
+			relative_angle += Power_120_AngleCompensation;
+		else if (chassis_power_MAX == 100)
+			relative_angle += Power_100_AngleCompensation;
+		else if (chassis_power_MAX == 80)
+			relative_angle += Power_80_AngleCompensation;
+		else if (chassis_power_MAX == 70)
+			relative_angle += Power_70_AngleCompensation;
+		else if (chassis_power_MAX == 60)
+			relative_angle += Power_60_AngleCompensation;
+		else if (chassis_power_MAX == 50)
+			relative_angle += Power_50_AngleCompensation;
+		else
+			relative_angle += -0.2;
+	}
 	else
-		relative_angle += -0.2;
-	
+	{
+		if (chassis_power_MAX == 120)
+			relative_angle -= Power_120_AngleCompensation;
+		else if (chassis_power_MAX == 100)
+			relative_angle -= Power_100_AngleCompensation;
+		else if (chassis_power_MAX == 80)
+			relative_angle -= Power_80_AngleCompensation;
+		else if (chassis_power_MAX == 70)
+			relative_angle -= Power_70_AngleCompensation;
+		else if (chassis_power_MAX == 60)
+			relative_angle -= Power_60_AngleCompensation;
+		else if (chassis_power_MAX == 50)
+			relative_angle -= Power_50_AngleCompensation;
+		else
+			relative_angle -= -0.2;
+	}
 	return relative_angle;
 }
 
@@ -477,7 +497,7 @@ static void chassis_set_contorl(chassis_move_t *chassis_move_control)
 			relative_angle = relative_angle;
 
 		//小陀螺角度补偿
-		relative_angle = chassis_AngleCompensation(chassis_move_control->chassis_power_MAX,relative_angle);
+		relative_angle = chassis_AngleCompensation(chassis_move_control->chassis_power_MAX,relative_angle,temp_wz);
 
 		
 		sin_yaw = arm_sin_f32((relative_angle));
@@ -495,9 +515,9 @@ static void chassis_set_contorl(chassis_move_t *chassis_move_control)
 		
 		if (fabs(chassis_move_control->vx_set_CANsend) > 50 || fabs(chassis_move_control->vy_set_CANsend) > 50)
 		{
-			chassis_move_control->wz_set *= 1.2f;
-			chassis_move_control->vx_set *= 1.0f;
-			chassis_move_control->vy_set *= 1.0f;
+			chassis_move_control->wz_set *= 0.8f;
+			chassis_move_control->vx_set *= 1.5f;
+			chassis_move_control->vy_set *= 1.5f;
 			flag = 1;
 		}
 		else // 当原地时，加大转速
@@ -838,7 +858,7 @@ void CHASSIC_MOTOR_POWER_CONTROL(chassis_move_t *chassis_motor)
 	chassis_motor->power_control.POWER_MAX = 0; //最终底盘的最大功率初始化
 	chassis_motor->power_control.forecast_total_power = 0; // 预测总功率初始化
 	
-	PID_Calc(&chassis_motor->buffer_pid, chassis_motor->chassis_power_buffer, 20); //使缓冲能量维持在一个稳定的范围
+	PID_Calc(&chassis_motor->buffer_pid, chassis_motor->chassis_power_buffer, 40); //使缓冲能量维持在一个稳定的范围
 
 
       max_power_limit = chassis_motor->chassis_power_MAX;  //获得裁判系统的功率限制数值
@@ -884,6 +904,11 @@ void CHASSIC_MOTOR_POWER_CONTROL(chassis_move_t *chassis_motor)
 	else
 	{
 		chassis_motor->power_control.POWER_MAX = max_power_limit-10 ;
+	}
+	
+	if(key_ctrl)//充电模式，下坡模式
+	{
+		chassis_motor->power_control.POWER_MAX *= 0.7;
 	}
 	
 	CAN_cmd_gimbal(get_cap.capvot, (int32_t)chassis_motor->power_control.POWER_MAX);

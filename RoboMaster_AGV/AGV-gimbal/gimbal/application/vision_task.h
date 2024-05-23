@@ -21,7 +21,7 @@
 #include "remote_control.h"
 
 //允许发弹角度误差 rad
-#define ALLOW_ATTACK_ERROR 0.036f//0.04f
+#define ALLOW_ATTACK_ERROR 0.042f//0.04f
 //允许发弹距离 m 
 #define ALLOW_ATTACK_DISTANCE 20.0f
 //允许发弹概率
@@ -53,7 +53,7 @@
 #define BEGIN_SET_BULLET_SPEED 25.0f
 
 //空气阻力系数
-#define AIR_K1 0.00001f//0.005f//0.01f
+#define AIR_K1 0.005f
 //初始子弹飞行迭代数值
 #define T_0 0.0f
 //迭代精度
@@ -63,21 +63,21 @@
 //最大迭代次数
 #define MAX_ITERATE_COUNT 20
 //视觉计算时间
-#define VISION_CALC_TIME 0.004f//0.005f
+#define VISION_CALC_TIME 0.003f
 
 //比例补偿器比例系数
 #define ITERATE_SCALE_FACTOR 0.3f
 //重力加速度
-#define GRAVITY 9.7964f//9.79849f//9.8035f//9.7988f
+#define GRAVITY 9.79849f//9.8035f//9.7988f
 
 //固有时间偏移即上位机计算时间单位ms
-#define TIME_BIAS 20//5
+#define TIME_BIAS 40
 //机器人自身固有时间偏差
-#define ROBOT_TIMR_BIAS 90
+#define ROBOT_TIMR_BIAS 75
 
 
 //偏差时间队列大小
-#define TIME_BIAS_QUEUE_CAPACITY 10//10
+#define TIME_BIAS_QUEUE_CAPACITY 10
 
 //ms转s
 #ifndef TIME_MS_TO_S
